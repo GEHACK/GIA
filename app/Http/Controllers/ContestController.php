@@ -9,12 +9,12 @@ use Eventix\Http\CrudController;
 use Illuminate\Http\Request;
 
 class ContestController extends CrudController {
-    protected static $model = Contest::class;
 
     protected static $routes = [
         "tts"                  => ["timeToStart" => "GET"],
         "register/laptop/{id}" => ["registerDeployment" => "POST"],
         "register/{cid}"       => ["registerContest" => "POST"],
+        "key"                  => ["keyRetrieve" => "GET"],
     ];
 
     protected static $blacklist = self::map;
@@ -26,6 +26,10 @@ class ContestController extends CrudController {
             abort(406, $pc->getErrors());
 
         return $pc;
+    }
+
+    public function keyRetrieve() {
+        return \Helpers::getKey();
     }
 
     public function registerDeployment(Request $r, $id) {
