@@ -2,7 +2,7 @@
 
 class Helpers {
 
-    public static function getKey($isPublic = true) {
+    public static function getKey($isPublic = true, $contents = true) {
         $keyLoc = storage_path('ssh/');
         if (!file_exists($keyLoc))
             mkdir($keyLoc);
@@ -13,6 +13,9 @@ class Helpers {
 
         if ($isPublic)
             $keyLoc .= ".pub";
+
+        if (!$contents)
+            return $keyLoc;
 
         return file_get_contents($keyLoc);
     }
