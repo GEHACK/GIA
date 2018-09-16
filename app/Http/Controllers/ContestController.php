@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class ContestController extends CrudController {
 
-    protected static $name = 'template';
+    protected static $name = '';
     protected static $model = Contest::class;
 
     protected static $routes = [

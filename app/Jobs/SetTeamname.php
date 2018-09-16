@@ -36,14 +36,32 @@ class SetTeamname extends Job
 
         $tn = $user->team->name;
 
-        $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -v -A -t -i $pk root@$pip ssh -A -v root@$ip /bin/bash << EOT
+        //         // ssh -A -t root@192.168.56.102 ssh -o StrictHostKeyChecking=no root@10.1.0.247
+        $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -A -t -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -t -v root@$ip reboot";
+
+
+        /*
+         /bin/bash << EOT
+
 /usr/bin/chfn -f \"$tn\" contestant
+
+cat > /usr/share/cups/banners/pixie << EOF
+#PDF-BANNER
+Template default.pdf
+Show time-at-creation time-at-processing job-originating-user-name
+
+Please bring this to: $tn
+EOF
+
+lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.10 -o job-sheets-default=pixie,none -E
+
+EOT
+
 sleep 0.5
 /usr/sbin/service lightdm restart
-EOT
-";
 
-        $this->liveExecuteCommand($cmd);
+         */
+        dd($this->liveExecuteCommand($cmd));
 
         echo $time;
     }

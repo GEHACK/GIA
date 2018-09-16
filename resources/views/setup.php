@@ -143,6 +143,33 @@ wget ${baseurl}/netbeans/install.xml
 chmod +x netbeans-8.0-javase-linux.sh
 ./netbeans-8.0-javase-linux.sh --silent --state install.xml
 
+
+# Setup aliasses
+cat >> /etc/profile << EOF
+
+mycc() {
+    gcc -x c -Wall -O2 -static -pipe -o program "$@" -lm
+    ./program
+}
+mycpp() {
+    g++ -x c++ -Wall -O2 -static -pipe -o program "$@" -lm
+    ./program
+}
+myjava() {
+    javac -encoding UTF-8 -sourcepath . -d . "$@"
+    for i in *.class
+    do
+        java -Dfile.encoding=UTF-8 -XX:+UseSerialGC "${i%.*}"
+    done
+}
+
+alias mypy='echo "Please select a python version: Run \"alias mypy=mypy2\" or \"alias mypy=mypy3\""'
+alias mypy2=pypy2
+alias mypy3=python3
+
+EOF
+
+
 rm /etc/rc.local
 
 reboot
@@ -210,6 +237,8 @@ chmod +x *.snap
 
 cat >  /etc/nginx/sites-enabled/pixie << EOF
 
+<?php $ccontestHash = str_random(32); ?>
+
 server {
     listen 80;
 
@@ -227,7 +256,7 @@ server {
         proxy_set_header host pixie.progcont;
         proxy_set_header Origin "127.0.0.1";
         proxy_set_header X-REAL-IP \$remote_addr;
-        proxy_set_header contest-hash VZ1fmxC2y6d2DNMrZ14rUKALlcRo7jG3;
+        proxy_set_header contest-hash <?php echo $ccontestHash; ?>
     }
 }
 
@@ -247,7 +276,7 @@ server {
         proxy_set_header X-REAL-IP \$remote_addr;
         proxy_ssl_verify      off;
         proxy_ssl_server_name on;
-        proxy_set_header contest-hash VZ1fmxC2y6d2DNMrZ14rUKALlcRo7jG3;
+        proxy_set_header contest-hash <?php echo $ccontestHash; ?>;
     }
 }
 
