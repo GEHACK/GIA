@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 
 class ContestController extends CrudController {
 
+    protected static $name = 'template';
+    protected static $model = Contest::class;
+
     protected static $routes = [
         "tts"                  => ["timeToStart" => "GET"],
         "register/laptop/{id}" => ["registerDeployment" => "POST"],
@@ -46,8 +49,6 @@ class ContestController extends CrudController {
             $attrs["ip"] = $r->header("X-Real-IP");
         }
 
-        // dd($attrs);
-
         if (!is_null($depl)) {
             $depl->fill($attrs);
 
@@ -63,6 +64,16 @@ class ContestController extends CrudController {
             $depl = Deployment::create($attrs);
             if ($depl->isInvalid())
                 abort(406, $depl->getErrors());
+
+            // Remove old hosts
+            $builder = Deployment::where('id', '<>', $depl->id)->where('ip', $depl->ip);
+            if (is_null($attrs["proxy_ip"])){
+                $builder = $builder->whereNull('proxy_ip');
+            } else {
+                $builder = $builder->where('proxy_ip', $depl->proxy_ip);
+            }
+
+            $builder->delete();
         }
 
         return $depl;
