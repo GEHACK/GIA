@@ -325,11 +325,11 @@ cat /var/lib/misc/dnsmasq.leases
 EOF
 chmod +x /usr/bin/leases
 
-wget http://<?php echo env("judge.gehack.nl"); ?>/pixie/printer/printer.ppd.gz --header "host: <?php echo env("SYS_URL"); ?>"
+wget http://<?php echo env("JUDGE_BASE"); ?>/pixie/printer/printer.ppd.gz --header "host: <?php echo env("SYS_URL"); ?>"
 
 mkdir netbeans
 cd netbeans
-wget http://<?php echo env("judge.gehack.nl"); ?>/pixie/netbeans/install.xml --header "host: <?php echo env("SYS_URL"); ?>"
-wget http://<?php echo env("judge.gehack.nl"); ?>/pixie/netbeans/netbeans-8.0-javase-linux.sh --header "host: <?php echo env("SYS_URL"); ?>"
+wget http://<?php echo env("JUDGE_BASE"); ?>/pixie/netbeans/install.xml --header "host: <?php echo env("SYS_URL"); ?>"
+wget http://<?php echo env("JUDGE_BASE"); ?>/pixie/netbeans/netbeans-8.0-javase-linux.sh --header "host: <?php echo env("SYS_URL"); ?>"
 cd ..
 
