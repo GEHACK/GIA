@@ -12,6 +12,8 @@ class User extends Model {
     protected $primaryKey = 'userid';
     protected $with = ['team'];
 
+    public $timestamps = false;
+
     protected $attributes = [
         "username",
         "name",

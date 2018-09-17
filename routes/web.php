@@ -6,3 +6,4 @@ $router->get('', function() {
 
 \App\Http\Controllers\ContestController::buildRoutes($router);
 \App\Http\Controllers\TemplateController::buildRoutes($router);
+\App\Http\Controllers\AssignmentController::buildRoutes($router);

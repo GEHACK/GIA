@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GetHomedir;
 use App\Models\Deployment;
 use App\Models\Dj\Contest;
 use App\Models\Contest as pContest;
@@ -18,6 +19,7 @@ class ContestController extends CrudController {
         "register/laptop/{id}" => ["registerDeployment" => "POST"],
         "register/{cid}"       => ["registerContest" => "POST"],
         "key"                  => ["keyRetrieve" => "GET"],
+        "homedirs"             => ["getHomedirs" => "POST"],
     ];
 
     protected static $blacklist = self::map;
@@ -25,9 +27,10 @@ class ContestController extends CrudController {
     public function registerContest($id) {
         $pc = pContest::create(["cid" => $id]);
 
-        if ($pc->isInvalid())
-            abort(406, $pc->getErrors());
+        // if ($pc->isInvalid())
+        //     abort(406, $pc->getErrors());
 
+        return view('setup', ['pc' => $pc]);
         return $pc;
     }
 
@@ -36,7 +39,6 @@ class ContestController extends CrudController {
     }
 
     public function registerDeployment(Request $r, $id) {
-        $depl = Deployment::find($id);
 
         $attrs = [
             "id"       => $id,
@@ -48,6 +50,8 @@ class ContestController extends CrudController {
             $attrs["proxy_ip"] = $attrs["ip"];
             $attrs["ip"] = $r->header("X-Real-IP");
         }
+
+        $depl = Deployment::find($id);
 
         if (!is_null($depl)) {
             $depl->fill($attrs);
@@ -67,14 +71,14 @@ class ContestController extends CrudController {
 
             // Remove old hosts
             $builder = Deployment::where('id', '<>', $depl->id)->where('ip', $depl->ip);
-            if (is_null($attrs["proxy_ip"])){
+            if (is_null($attrs["proxy_ip"])) {
                 $builder = $builder->whereNull('proxy_ip');
             } else {
                 $builder = $builder->where('proxy_ip', $depl->proxy_ip);
             }
-
-            $builder->delete();
         }
+
+        $builder->delete();
 
         return $depl;
     }
@@ -95,5 +99,11 @@ class ContestController extends CrudController {
             "tts" => max(0, $tts),
             "tte" => max(-1, $tte),
         ];
+    }
+
+    public function getHomedirs() {
+        $depls = Deployment::all();
+        foreach ($depls as $depl)
+            $this->dispatch(new GetHomedir($depl));
     }
 }

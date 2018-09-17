@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Models\Deployment;
 use App\Models\Dj\User;
 
-class GetHomedir extends Job {
+class SshJob extends Job {
     private $depl;
     protected $command = "";
 
