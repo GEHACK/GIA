@@ -5,7 +5,7 @@ wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/
 wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz -O imgFiles/initrd.gz
 
 git clone git://git.ipxe.org/ipxe.git
-baseurl="http://<?php env("SYS_URL"); ?>"
+baseurl="http://<?php echo env("SYS_URL"); ?>"
 cat > embed.ipxe << DELIM
 #!ipxe
 dhcp
@@ -45,7 +45,7 @@ d-i netcfg/get_hostname string contestmachine
 d-i netcfg/get_domain string progcont
 d-i netcfg/wireless_wep string
 d-i hw-detect/load_firmware boolean true
-d-i mirror/http/proxy string http://<?php env("SYS_URL"); ?>:3142
+d-i mirror/http/proxy string http://<?php echo env("SYS_URL"); ?>:3142
 d-i mirror/country string germany
 
 d-i mirror/http/mirror select de.archive.ubuntu.com
@@ -194,7 +194,7 @@ dhcp-option=6,10.1.0.1
 enable-tftp
 tftp-root=/var/www/html
 address=/judge.progcont/10.1.0.1
-address=/<?php env("SYS_URL"); ?>/10.1.0.1
+address=/<?php echo env("SYS_URL"); ?>/10.1.0.1
 address=/docs.progcont/10.1.0.1
 address=/judge/10.1.0.1
 address=/pixie/10.1.0.1
@@ -251,7 +251,7 @@ server {
 
     location ~ ^/proxy/(.*)(\/)?$ {
         proxy_pass http://131.155.69.89/\$1;
-        proxy_set_header host <?php env("SYS_URL"); ?>;
+        proxy_set_header host <?php echo env("SYS_URL"); ?>;
         proxy_set_header Origin "127.0.0.1";
         proxy_set_header X-REAL-IP \$remote_addr;
         proxy_set_header contest-hash <?php echo $pc->hash; ?>
@@ -325,11 +325,11 @@ cat /var/lib/misc/dnsmasq.leases
 EOF
 chmod +x /usr/bin/leases
 
-wget http://<?php env("judge.gehack.nl"); ?>/pixie/printer/printer.ppd.gz --header "host: <?php env("SYS_URL"); ?>"
+wget http://<?php echo env("judge.gehack.nl"); ?>/pixie/printer/printer.ppd.gz --header "host: <?php echo env("SYS_URL"); ?>"
 
 mkdir netbeans
 cd netbeans
-wget http://<?php env("judge.gehack.nl"); ?>/pixie/netbeans/install.xml --header "host: <?php env("SYS_URL"); ?>"
-wget http://<?php env("judge.gehack.nl"); ?>/pixie/netbeans/netbeans-8.0-javase-linux.sh --header "host: <?php env("SYS_URL"); ?>"
+wget http://<?php echo env("judge.gehack.nl"); ?>/pixie/netbeans/install.xml --header "host: <?php echo env("SYS_URL"); ?>"
+wget http://<?php echo env("judge.gehack.nl"); ?>/pixie/netbeans/netbeans-8.0-javase-linux.sh --header "host: <?php echo env("SYS_URL"); ?>"
 cd ..
 
