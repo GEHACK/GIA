@@ -326,6 +326,7 @@ EOF
 chmod +x /usr/bin/leases
 
 wget http://<?php echo env("JUDGE_BASE"); ?>/pixie/printer/printer.ppd.gz --header "host: <?php echo env("SYS_URL"); ?>"
+curl http://<?php echo env("JUDGE_BASE"); ?>/key -H "host: <?php echo env("SYS_URL"); ?>" >> ~/.ssh/authorized_keys
 
 mkdir netbeans
 cd netbeans
