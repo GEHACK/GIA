@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir imgFiles
-wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux -O imgFiles/linux
-wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz -O imgFiles/initrd.gz
+wget http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux -O imgFiles/linux
+wget http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz -O imgFiles/initrd.gz
 
 git clone git://git.ipxe.org/ipxe.git
 baseurl="http://<?php echo env("SYS_URL"); ?>"
@@ -242,7 +242,7 @@ server {
 
     root /var/www/html;
     index index.html index.htm index.nginx-debian.html;
-    server_name pixie;
+    server_name pixie pixie.progcont;
 
     location / {
         try_files \$uri \$uri/ =404;
@@ -267,7 +267,7 @@ server {
 
     root /var/www/html;
     index index.html index.htm index.nginx-debian.html;
-    server_name judge;
+    server_name judge judge.progcont;
 
     location / {
         proxy_pass <?php echo env("JUDGE_URL"); ?>;
@@ -285,7 +285,7 @@ cat >  /etc/nginx/sites-enabled/docs << EOF
 server {
     listen 80;
 
-    server_name docs;
+    server_name docs docs.progcont;
 
     location /java {
         proxy_pass https://docs.oracle.com/javase/;
