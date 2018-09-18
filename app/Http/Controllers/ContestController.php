@@ -27,11 +27,10 @@ class ContestController extends CrudController {
     public function registerContest($id) {
         $pc = pContest::create(["cid" => $id]);
 
-        // if ($pc->isInvalid())
-        //     abort(406, $pc->getErrors());
+        if ($pc->isInvalid())
+            abort(406, $pc->getErrors());
 
         return view('setup', ['pc' => $pc]);
-        return $pc;
     }
 
     public function keyRetrieve() {
