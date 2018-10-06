@@ -6,9 +6,11 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
+aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind"
 
 curl -XPOST -H "Content-Type: text/plain" --data 5 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
+add-apt-repository ppa:damien-moore/codeblocks-stable
 apt-get update
 apt-get install software-properties-common screen curl snapd parallel -y --force-yes
 curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
@@ -39,7 +41,7 @@ cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-fi
 curl -XPOST -H "Content-Type: text/plain" --data 40 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 
-apt-get install make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm -y --force-yes
+apt-get install $aptpackages -y --force-yes
 
 curl -XPOST -H "Content-Type: text/plain" --data 60 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
@@ -65,10 +67,10 @@ mv /lib/modules/$(uname -r)/kernel/drivers/net/wireless /root/backup/
 curl -XPOST -H "Content-Type: text/plain" --data 94 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 #install netbeans 8
-wget ${baseurl}/netbeans/netbeans-8.0-javase-linux.sh
-wget ${baseurl}/netbeans/install.xml
-chmod +x netbeans-8.0-javase-linux.sh
-    ./netbeans-8.0-javase-linux.sh --silent --state install.xml
+#wget ${baseurl}/netbeans/netbeans-8.0-javase-linux.sh
+#wget ${baseurl}/netbeans/install.xml
+#chmod +x netbeans-8.0-javase-linux.sh
+#    ./netbeans-8.0-javase-linux.sh --silent --state install.xml
 
 curl -XPOST -H "Content-Type: text/plain" --data 96 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
@@ -103,7 +105,7 @@ curl -XPOST -H "Content-Type: text/plain" --data 98 ${baseurl}/proxy/pixie/scrip
 cat >> /etc/rc.local << EOF
 
 snaps=$(snap list)
-apts=$(apt list --installed software-properties-common screen curl snapd parallel make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm)
+apts=$(apt list --installed $aptpackages)
 echo "$apts
 
 $snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
