@@ -35,25 +35,25 @@ class GetHomedir extends Job {
         $tid = $user->team->teamid;
 
         $rand = str_random(32);
-        $sshBase = "eval `ssh-agent`; ssh-add $pk;\n ssh -v -A -t -i $pk root@$pip ssh -A -v root@$ip";
+        echo "Storing into: '$rand'";
+        $sshBase = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip";
         $res = $this->liveExecuteCommand("$sshBase /bin/bash << EOT
 /usr/sbin/service lightdm restart
 /bin/tar czf /root/$rand.tar.gz /home/contestant/
-EOT
 ");
+        $scpCmd = "scp -i $pk -o StrictHostKeyChecking=no -o ProxyCommand=\"ssh -A -i $pk -t -o StrictHostKeyChecking=no root@$pip nc $ip 22\" root@$ip:/root/$rand.tar.gz " . storage_path()."/$tid-$rand.tar.gz";
+        echo $scpCmd;
+        var_dump($this->liveExecuteCommand($scpCmd));
 
-        $this->liveExecuteCommand("scp -o ProxyCommand=\"ssh -A -t root@$pip nc $ip 22\" root@$ip:/root/$rand.tar.gz " . storage_path()."/$tn-$tid-$rand.tar.gz");
-
-        $this->liveExecuteCommand("$sshBase /bin/bash << EOT
+        var_dump($this->liveExecuteCommand("$sshBase /bin/bash << EOT
 rm -rf /home/contestant/
 cp -r /etc/skel /home/contestant
 rm -f /root/$rand.tar.gz
 chown contestant:contestant /home/contestant/ -R
 reboot
-EOT
-");
+"));
 
-        dd($res);
+        var_dump($res);
         echo $time;
     }
 

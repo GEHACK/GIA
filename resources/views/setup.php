@@ -29,152 +29,12 @@ echo Trying to load initrd
 initrd \${base-url}/imgFiles/initrd.gz
 
 echo Attempt boot
-imgargs linux auto=true fb=false url=\${base-url}/preseed.cfg tasksel/first=\"\" netcfg/choose_interface=enp0s3 hostname=teammachine domain=progcont
+imgargs linux auto=true fb=false url=\${base-url}/proxy/template/preseed tasksel/first=\"\" netcfg/choose_interface=eno1 hostname=teammachine domain=progcont
 
 boot
 
 DELIM
 
-cat > preseed.cfg << DELIM
-d-i debian-installer/locale string en_US
-d-i console-setup/ask_detect boolean false
-d-i keyboard-configuration/layoutcode string us
-d-i netcfg/choose_interface select enp0s3
-d-i netcfg/dhcp_timeout string 600
-d-i netcfg/get_hostname string contestmachine
-d-i netcfg/get_domain string progcont
-d-i netcfg/wireless_wep string
-d-i hw-detect/load_firmware boolean true
-d-i mirror/http/proxy string http://<?php echo env("SYS_URL"); ?>:3142
-d-i mirror/country string germany
-
-d-i mirror/http/mirror select de.archive.ubuntu.com
-d-i clock-setup/utc boolean true
-d-i time/zone string Europe/Amsterdam
-d-i clock-setup/ntp boolean true
-d-i partman-auto/method string regular
-d-i partman-lvm/purge_lvm_from_device boolean true
-d-i partman-lvm/confirm boolean true
-d-i partman-auto/choose_recipe select atomic
-d-i partman-partitioning/confirm_write_new_label boolean true
-d-i partman/choose_partition select finish
-d-i partman/confirm boolean true
-d-i partman-md/confirm boolean true
-d-i partman-partitioning/confirm_write_new_label boolean true
-d-i partman/choose_partition select finish
-d-i partman/confirm boolean true
-d-i partman/confirm_nooverwrite boolean true
-d-i passwd/make-user boolean false
-d-i passwd/user-fullname string Contestant
-d-i passwd/username string contestant
-d-i passwd/user-password password contestant
-d-i passwd/user-password-again password contestant
-d-i user-setup/allow-password-weak boolean true
-d-i passwd/auto-login boolean true
-d-i user-setup/encrypt-home boolean false
-d-i pkgsel/include string openssh-server htop curl
-d-i pkgsel/upgrade select none
-d-i pkgsel/update-policy select none
-d-i pkgsel/updatedb boolean false
-d-i lilo-installer/skip boolean true
-d-i grub-installer/only_debian boolean true
-d-i grub-installer/with_other_os boolean true
-d-i finish-install/reboot_in_progress note
-
-xserver-xorg xserver-xorg/autodetect_monitor boolean true
-xserver-xorg xserver-xorg/config/monitor/selection-method    select medium
-xserver-xorg xserver-xorg/config/monitor/mode-list    select 1024x768 @ 60 Hz
-
-d-i preseed/late_command string in-target usermod -G contestant contestant; mkdir /target/root/.ssh; echo "      dhcp-identifier: mac" >> /target/etc/netplan/01-netcfg.yaml; mkdir /target/root/.ssh; chmod 700 /target/root/.ssh; wget ${baseurl}/firstboot -O /target/etc/rc.local; chmod +x /target/etc/rc.local
-DELIM
-
-cat > firstboot << DELIM
-#!/bin/bash
-sleep 10
-
-ip addr show
-sleep 5
-
-apt-get update
-apt-get install software-properties-common screen curl snapd parallel -y --force-yes
-curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
-
-cat > /etc/cron.d/notif-pixie << EOF
-SHELL=/bin/sh
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-
-* * * * * root /usr/bin/curl -XPOST ${baseurl}/proxy/register/laptop/\$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '') >/dev/null 2>&1
-EOF
-
-echo "export LC_ALL=C.UTF-8" >> /etc/profile
-
-# Install de
-apt-get install --no-install-recommends ubuntu-gnome-desktop -y --force-yes
-apt-get remove --purge gdm3 -y --force-yes
-
-apt-get install lightdm-webkit-greeter lightdm -y --force-yes
-
-wget ${baseurl}/proxy/pixie/greeter.html -O /usr/share/lightdm-webkit/themes/default/index.html
-wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
-cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
-
-apt-get install make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm -y --force-yes
-
-mkdir snaps
-cd snaps
-wget -r -np --cut-dirs=3 -R "index.html*" ${baseurl}/snaps
-cd ${baseurl}
-find . -name "*.assert" | cut -d'.' -f2 | parallel 'snap ack .{}.assert; snap install --classic .{}.snap'
-cd ../..
-rm -rf snaps
-
-
-# Install printer
-wget ${baseurl}/printer.ppd.gz
-lpadmin -p Printer -P printer.ppd.gz -v ipp://10.1.0.10
-
-#remove wireless
-mkdir -p /root/backup/
-mv /lib/modules/$(uname -r)/kernel/drivers/net/wireless /root/backup/
-
-#install netbeans 8
-wget ${baseurl}/netbeans/netbeans-8.0-javase-linux.sh
-wget ${baseurl}/netbeans/install.xml
-chmod +x netbeans-8.0-javase-linux.sh
-./netbeans-8.0-javase-linux.sh --silent --state install.xml
-
-
-# Setup aliasses
-cat >> /etc/profile << EOF
-
-mycc() {
-    gcc -x c -Wall -O2 -static -pipe -o program "$@" -lm
-    ./program
-}
-mycpp() {
-    g++ -x c++ -Wall -O2 -static -pipe -o program "$@" -lm
-    ./program
-}
-myjava() {
-    javac -encoding UTF-8 -sourcepath . -d . "$@"
-    for i in *.class
-    do
-        java -Dfile.encoding=UTF-8 -XX:+UseSerialGC "${i%.*}"
-    done
-}
-
-alias mypy='echo "Please select a python version: Run \"alias mypy=mypy2\" or \"alias mypy=mypy3\""'
-alias mypy2=pypy2
-alias mypy3=python3
-
-EOF
-
-
-rm /etc/rc.local
-
-reboot
-
-DELIM
 
 apt install dnsmasq -y
 cat > /etc/dnsmasq.conf << DELIM
@@ -233,7 +93,7 @@ snap download pycharm-community
 snap download eclipse
 snap download atom
 snap download vscode
-chmod +x *.snap
+chmod +rx *
 
 cat >  /etc/nginx/sites-enabled/pixie << EOF
 

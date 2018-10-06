@@ -16,8 +16,10 @@ class AssignmentController extends CrudController {
     protected static $name = 'assign';
 
     protected static $routes = [
+        "/forceall"    => ["reapplyAssignments" => "POST"],
+        "/force/{uid}" => ["reapplyAssignment" => "POST"],
         "/fix[/{cid}]" => ["fixAssignment" => "GET"],
-        "/{ip}/{tid}" => ["assign" => "GET"],
+        "/{ip}/{tid}"  => ["assign" => "GET"],
     ];
 
     protected static $blacklist = self::map;
@@ -56,6 +58,7 @@ class AssignmentController extends CrudController {
         $user->save();
 
         $this->dispatch(new SetTeamname($depl));
+
         return response('', 204);
     }
 
@@ -87,6 +90,24 @@ class AssignmentController extends CrudController {
 
             $this->dispatch(new SetTeamname($depls[$i]));
         }
+
+        return response('', 204);
+    }
+
+    public function reapplyAssignments($cid = 1) {
+        $depls = Deployment::whereNot("userid")->get();
+
+        foreach ($depls as $depl) {
+            $this->dispatch(new SetTeamname($depls[$i]));
+        }
+
+        return response('', 204);
+    }
+
+    public function reapplyAssignment($uid) {
+        $depl = Deployment::where("userid", $uid)->first();
+
+        $this->dispatch(new SetTeamname($depl));
 
         return response('', 204);
     }

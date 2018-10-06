@@ -53,9 +53,9 @@ lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.10 -o job-sheets-defa
 sleep 0.5
 
 service lightdm restart
-EOT";
+";
 
-        dd($this->liveExecuteCommand($cmd));
+        var_dump($this->liveExecuteCommand($cmd));
 
         echo $time;
     }
