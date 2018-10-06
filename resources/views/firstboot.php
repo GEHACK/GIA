@@ -5,7 +5,7 @@ ip addr show
 sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
-scriptid="<?php echo $script->id; ?>"
+scriptid="<?php echo $script->guid; ?>"
 
 curl -XPOST -H "Content-Type: text/plain" --data 5 ${baseurl}/proxy/pixie/script/${scriptid}/update
 

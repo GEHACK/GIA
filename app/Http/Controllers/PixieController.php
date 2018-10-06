@@ -36,7 +36,7 @@ class PixieController extends CrudController {
             "value"  => 0,
         ]);
 
-        return view("firstboot");
+        return view("firstboot", ["script" => $script]);
     }
 
     public function ping(Request $r) {
@@ -45,7 +45,6 @@ class PixieController extends CrudController {
 
     private function ensureDeployment(Request $r) {
         $attrs = [
-            "id"       => $id,
             "ip"       => $r->ip(),
             "proxy_ip" => null,
         ];
@@ -55,7 +54,7 @@ class PixieController extends CrudController {
             $attrs["ip"] = $r->header("X-Real-IP");
         }
 
-        $depl = Deployment::find($id);
+        $depl = Deployment::where($attrs)->first();
 
         if (!is_null($depl)) {
             $depl->fill($attrs);
@@ -69,6 +68,7 @@ class PixieController extends CrudController {
                 $depl->touch();
             }
         } else {
+            $attrs["id"] = str_random(32);
             $depl = Deployment::create($attrs);
             if ($depl->isInvalid())
                 abort(406, $depl->getErrors());
