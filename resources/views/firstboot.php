@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb"
+aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb git"
 
 curl -XPOST -H "Content-Type: text/plain" --data 5 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
