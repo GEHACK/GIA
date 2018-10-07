@@ -109,11 +109,11 @@ curl -XPOST -H "Content-Type: text/plain" --data 98 ${baseurl}/proxy/pixie/scrip
 
 cat > /etc/rc.local << EOF
 
-snaps=$(snap list)
-apts=$(apt list --installed $aptpackages)
-echo "$apts
+snaps="\$(snap list)"
+apts="\$(apt list --installed $aptpackages)"
+echo "\$apts
 
-$snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
+\$snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
 
 rm /etc/rc.local
 
