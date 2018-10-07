@@ -6,11 +6,12 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind"
+aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb"
 
 curl -XPOST -H "Content-Type: text/plain" --data 5 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 add-apt-repository ppa:damien-moore/codeblocks-stable
+add-apt-repository https://pc2cancer.ecs.csus.edu/apt/
 apt-get update
 apt-get install software-properties-common screen curl snapd parallel -y --force-yes
 curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
@@ -21,7 +22,7 @@ cat > /etc/cron.d/notif-pixie << EOF
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-* * * * * root /usr/bin/curl -XPOST ${baseurl}/proxy/register/laptop/\$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '') >/dev/null 2>&1
+#* * * * * root /usr/bin/curl -XPOST ${baseurl}/proxy/register/laptop/\$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '') >/dev/null 2>&1
 EOF
 
 echo "export LC_ALL=C.UTF-8" >> /etc/profile
@@ -100,16 +101,19 @@ alias mypy3=python3
 
 EOF
 
+cd /root
+wget https://www.domjudge.org/icpc-kotlinc_1.1.4-3~icpc_all.deb
+dpkg -i icpc-kotlinc_1.1.4-3~icpc_all.deb
+
 curl -XPOST -H "Content-Type: text/plain" --data 98 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
-cat >> /etc/rc.local << EOF
+cat > /etc/rc.local << EOF
 
 snaps=$(snap list)
 apts=$(apt list --installed $aptpackages)
 echo "$apts
 
 $snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
-
 
 rm /etc/rc.local
 
