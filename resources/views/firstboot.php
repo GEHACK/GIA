@@ -158,24 +158,14 @@ alias mypy3=python3
 
 EOF
 
-cd /root
+curl -XPOST -H "Content-Type: text/plain" --data 100 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
-curl -XPOST -H "Content-Type: text/plain" --data 98 ${baseurl}/proxy/pixie/script/${scriptid}/update
+snaps="$(snap list)"
+apts="$(apt list --installed $aptpackages)"
+echo "$apts
 
-cat > /etc/rc.local << EOF
-#!/bin/bash
-
-snaps="\$(snap list)"
-apts="\$(apt list --installed $aptpackages)"
-echo "\$apts
-
-\$snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
+$snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
 
 rm /etc/rc.local
-reboot
-
-EOF
-
-curl -XPOST -H "Content-Type: text/plain" --data 99 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 reboot
