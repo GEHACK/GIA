@@ -8,6 +8,9 @@ baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
 aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb git icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
 
+# Start of more expansive installation
+apt install -y software-properties-common
+
 curl -XPOST -H "Content-Type: text/plain" --data 5 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 cat > /root/pc2cancer.gpgkey << EOF
@@ -70,7 +73,7 @@ apt-key add /root/pc2cancer.gpgkey
 add-apt-repository ppa:damien-moore/codeblocks-stable
 add-apt-repository https://pc2cancer.ecs.csus.edu/apt/
 apt-get update
-apt-get install software-properties-common screen curl snapd parallel -y --force-yes
+apt-get install screen curl snapd parallel -y --force-yes
 curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
 
 curl -XPOST -H "Content-Type: text/plain" --data 6 ${baseurl}/proxy/pixie/script/${scriptid}/update
