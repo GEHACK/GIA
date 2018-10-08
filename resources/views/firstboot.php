@@ -109,7 +109,7 @@ curl -XPOST -H "Content-Type: text/plain" --data 60 ${baseurl}/proxy/pixie/scrip
 mkdir /root/snaps
 cd /root/snaps
 wget -r -np --cut-dirs=3 -R "index.html*" ${baseurl}/snaps
-cd ${baseurl}
+cd <?php echo env("SYS_URL"); ?>
 find . -name "*.assert" | cut -d'.' -f2 | parallel 'snap ack .{}.assert; snap install --classic .{}.snap'
 cd ../..
 rm -rf snaps
@@ -166,10 +166,10 @@ curl -XPOST -H "Content-Type: text/plain" --data 100 ${baseurl}/proxy/pixie/scri
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
 
-curl -0 -v -X -H "Content-Type: text/plain" ${baseurl}/proxy/pixie/script/${scriptid}/finish \
--d @- << EOF
-$apts
-$snaps
+curl -0 -v -XPOST -H "Content-Type: text/plain; charset=utf-8" $baseurl/proxy/pixie/script/${scriptid}/finish \
+--data-binary @- << EOF
+${apts}
+${snaps}
 EOF
 
 rm /etc/rc.local

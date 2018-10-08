@@ -74,7 +74,7 @@ class PixieController extends CrudController {
                 abort(406, $depl->getErrors());
 
             // Attempt to find an available room
-            $room = Room::select("rooms.*", DB::raw("count(rd.*) as cnt"))
+            $room = Room::select("rooms.*", \DB::raw("count(rd.*) as cnt"))
                 ->leftjoin("room_deployment as rd", "rd.room_id", "=", "rooms.guid")
                 ->groupBy("rooms.guid")
                 ->having(\DB::raw("cnt < rooms.columns * rooms.rows"))
