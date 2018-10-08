@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="git make gcc openjdk-11-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb git icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
+aptpackages="git make gcc openjdk-11-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -106,8 +106,8 @@ apt-get install $aptpackages -y --force-yes
 
 curl -XPOST -H "Content-Type: text/plain" --data 60 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
-mkdir snaps
-cd snaps
+mkdir /root/snaps
+cd /root/snaps
 wget -r -np --cut-dirs=3 -R "index.html*" ${baseurl}/snaps
 cd ${baseurl}
 find . -name "*.assert" | cut -d'.' -f2 | parallel 'snap ack .{}.assert; snap install --classic .{}.snap'
@@ -166,7 +166,8 @@ curl -XPOST -H "Content-Type: text/plain" --data 100 ${baseurl}/proxy/pixie/scri
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
 
-cat <<- EOF | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
+curl -0 -v -X -H "Content-Type: text/plain" ${baseurl}/proxy/pixie/script/${scriptid}/finish \
+-d @- << EOF
 $apts
 $snaps
 EOF
