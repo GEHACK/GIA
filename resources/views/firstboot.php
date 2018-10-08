@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="git make gcc openjdk-8-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb git icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
+aptpackages="git make gcc openjdk-11-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.5 codeblocks terminator xterm ddd valgrind gdb git icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -70,8 +70,8 @@ gb5QGo5PpwPFV7eZc1hq7rpAX5Jdma+CkGSTCQ==
 EOF
 apt-key add /root/pc2cancer.gpgkey
 
-add-apt-repository ppa:damien-moore/codeblocks-stable
-add-apt-repository https://pc2cancer.ecs.csus.edu/apt/
+#add-apt-repository ppa:damien-moore/codeblocks-stable
+add-apt-repository http://pc2cancer.ecs.csus.edu/apt/
 apt-get update
 apt-get install screen curl snapd parallel -y --force-yes
 curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
@@ -165,9 +165,11 @@ curl -XPOST -H "Content-Type: text/plain" --data 100 ${baseurl}/proxy/pixie/scri
 
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
-echo "$apts
 
-$snaps" | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
+cat <<- EOF | curl -XPOST -H "Content-Type: text/plain" --data @- ${baseurl}/proxy/pixie/script/${scriptid}/finish
+$apts
+$snaps
+EOF
 
 rm /etc/rc.local
 
