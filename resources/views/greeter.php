@@ -18,7 +18,7 @@
         }
 
         #user_table {
-            padding-top: 30%;
+            padding-top: 300px;
         }
 
     </style>
