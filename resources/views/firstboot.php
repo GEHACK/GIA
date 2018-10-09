@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc junit"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -101,7 +101,6 @@ cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-fi
 
 curl -XPOST -H "Content-Type: text/plain" --data 40 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
-
 apt-get install $aptpackages -y --force-yes
 
 curl -XPOST -H "Content-Type: text/plain" --data 60 ${baseurl}/proxy/pixie/script/${scriptid}/update
@@ -133,6 +132,14 @@ curl -XPOST -H "Content-Type: text/plain" --data 94 ${baseurl}/proxy/pixie/scrip
 #wget ${baseurl}/netbeans/install.xml
 #chmod +x netbeans-8.0-javase-linux.sh
 #    ./netbeans-8.0-javase-linux.sh --silent --state install.xml
+
+cat > /etc/modprobe.d/blacklist-sound.conf << EOF
+blacklist soundcore
+blacklist snd
+blacklist snd_pcm
+blacklist snd_pcsp
+blacklist pcspkr
+EOF
 
 curl -XPOST -H "Content-Type: text/plain" --data 96 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
