@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="git make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -110,6 +110,7 @@ mkdir /root/snaps
 cd /root/snaps
 wget -r -np --cut-dirs=3 -R "index.html*" ${baseurl}/snaps
 cd <?php echo env("SYS_URL"); ?>
+
 find . -name "*.assert" | cut -d'.' -f2 | parallel 'snap ack .{}.assert; snap install --classic .{}.snap'
 cd ../..
 rm -rf snaps
