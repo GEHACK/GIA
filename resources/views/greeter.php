@@ -17,6 +17,10 @@
             verical-align: middle;
         }
 
+        #user_table {
+            padding-top: 30%;
+        }
+
     </style>
     <script type="text/javascript">
 

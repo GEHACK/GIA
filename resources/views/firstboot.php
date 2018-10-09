@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="git make gcc openjdk-11-jdk ntp xsltproc procps g++ fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
+aptpackages="git make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -137,7 +137,7 @@ curl -XPOST -H "Content-Type: text/plain" --data 96 ${baseurl}/proxy/pixie/scrip
 
 
 # Setup aliasses
-cat >> /etc/profile << EOF
+cat >> /home/contestant/.bashrc << EOF
 
 mycc() {
 gcc -x c -Wall -O2 -static -pipe -o program "$@" -lm
@@ -156,7 +156,7 @@ javac -encoding UTF-8 -sourcepath . -d . "$@"
 }
 
 alias mypy='echo "Please select a python version: Run \"alias mypy=mypy2\" or \"alias mypy=mypy3\""'
-alias mypy2=pypy2
+alias mypy2=pypy
 alias mypy3=python3
 
 EOF
