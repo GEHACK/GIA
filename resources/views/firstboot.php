@@ -96,8 +96,8 @@ apt-get install lightdm-webkit-greeter lightdm -y --force-yes
 curl -XPOST -H "Content-Type: text/plain" --data 35 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 wget ${baseurl}/proxy/pixie/greeter.html -O /usr/share/lightdm-webkit/themes/default/index.html
-wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
-cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
+# wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
+# cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
 
 curl -XPOST -H "Content-Type: text/plain" --data 40 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
