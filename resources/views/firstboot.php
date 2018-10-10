@@ -6,7 +6,7 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc-kotlinc junit"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains icpc-kotlinc junit"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -145,7 +145,7 @@ curl -XPOST -H "Content-Type: text/plain" --data 96 ${baseurl}/proxy/pixie/scrip
 
 
 # Setup aliasses
-cat >> /home/contestant/.bashrc << EOF
+cat >> /etc/skel/.bashrc << EOF
 
 mycc() {
 gcc -x c -Wall -O2 -static -pipe -o program "$@" -lm
@@ -169,6 +169,10 @@ alias mypy3=python3
 
 EOF
 
+rm -rf /home/contestant
+cp -r /etc/skel/ /home/contestant
+chown -R contestant:contestant /home/contestant/
+
 curl -XPOST -H "Content-Type: text/plain" --data 100 ${baseurl}/proxy/pixie/script/${scriptid}/update
 
 snaps="$(snap list)"
@@ -179,6 +183,17 @@ curl -0 -v -XPOST -H "Content-Type: text/plain; charset=utf-8" $baseurl/proxy/pi
 ${apts}
 ${snaps}
 EOF
+
+cat >> /root/makePublic.sh << EOF
+#!/bin/bash
+
+apt install lightdm-webkit-greeter --reinstall -y
+echo "" > /etc/apt/apt.conf
+
+EOF
+
+chmod +x /root/makePublic.sh
+
 
 rm /etc/rc.local
 
