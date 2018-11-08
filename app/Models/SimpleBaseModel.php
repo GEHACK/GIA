@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Watson\Validating\ValidatingTrait;
-use Webpatser\Uuid\Uuid;
 
-class SimpleBaseModel extends Model {
+class SimpleBaseModel extends \Eventix\Http\Model {
     use ValidatingTrait;
+    protected $primaryKey = 'guid';
 
     // Determines if a failed save/reinstate should result in an automatic error. @ValidatingTrait
     protected $rules = [];
@@ -15,4 +14,8 @@ class SimpleBaseModel extends Model {
     public $timestamps = true;
     protected $dateFormat = "Y-m-d\TH:i:sP";
     protected $dates = ['deleted_at'];
+
+    public function getWith() {
+        return $this->with;
+    }
 }

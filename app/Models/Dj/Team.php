@@ -26,4 +26,13 @@ class Team extends Model {
         "hostname",
         "penalty",
     ];
+
+    protected $appends = ['id'];
+    public function getIdAttribute() {
+        return $this->teamid;
+    }
+
+    public function users() {
+        return $this->hasMany(User::class, 'teamid');
+    }
 }

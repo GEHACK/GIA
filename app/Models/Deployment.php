@@ -4,20 +4,20 @@ namespace App\Models;
 
 use App\Models\Dj\User;
 
-class Deployment extends SimpleBaseModel {
+class Deployment extends BaseModel {
     protected $connection = "mysql";
 
     protected $rules = [
-        'id' => "required|unique:deployments,id",
         "ip" => "required|ipv4",
+        "room_id" => "nullable|exists:rooms,guid",
     ];
 
-    protected $with = ["user"];
+    protected $with = ["scripts"];
 
     protected $fillable = [
-        "id",
         "userid",
         "proxy_ip",
+        "room_id",
         "ip",
     ];
 
@@ -30,6 +30,20 @@ class Deployment extends SimpleBaseModel {
     }
 
     public function scripts() {
-        return $this->hasMany(ExecJob::class, "deployment_id");
+        return $this->hasMany(Script::class, "deployment_id");
+    }
+
+    public static function getRootAttacher() {
+        $res = Room::select("rooms.*", \DB::raw("count(d.guid) as cnt"))
+            ->leftjoin("deployments as d", "d.room_id", "=", "rooms.guid")
+            ->groupBy("rooms.guid")
+            ->havingRaw("cnt < rooms.columns * rooms.rows")
+            ->orderBy("name")
+            ->first();
+
+        if (is_null($res))
+            return $res;
+
+        return $res->deployments();
     }
 }

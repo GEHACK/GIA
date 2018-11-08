@@ -180,7 +180,7 @@
                     }
                 }
             }
-            doc.open("GET", "http://pixie.progcont/proxy/tts",true);
+            doc.open("GET", "http://<?php echo env("SYS_URL"); ?>/proxy/tts",true);
             doc.setRequestHeader("Origin", "127.0.0.1");
             doc.send("");
         }, checkDur)

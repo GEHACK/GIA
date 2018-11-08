@@ -3,20 +3,28 @@
 namespace App\Models;
 
 use App\Models\Dj\User;
+use Eventix\Http\HasOrderableChildren;
 
 class Room extends SimpleBaseModel {
+
+    use HasOrderableChildren;
+
     protected $connection = "mysql";
+    protected $primaryKey = 'guid';
 
     protected $rules = [
         'name' => 'required|unique:rooms,name',
     ];
 
-    protected $with = ["deployments"];
-
     protected $fillable = [
         "name",
         "rows",
-        "cols",
+        "columns",
+    ];
+
+    protected $casts = [
+        "rows" => "int",
+        "columns" => "int",
     ];
 
     public function contest() {
@@ -24,8 +32,6 @@ class Room extends SimpleBaseModel {
     }
 
     public function deployments() {
-        return $this->belongsToMany(Deployment::class, "room_deployment", "room_id", "deployment_id")
-            ->withPivot(["numerator", "denominator"])
-            ->orderBy(DB::raw("numerator / denominator"));
+        return $this->hasManyOrdered(Deployment::class, "room_id");
     }
 }

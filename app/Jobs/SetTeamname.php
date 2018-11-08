@@ -48,7 +48,7 @@ Show time-at-creation time-at-processing job-originating-user-name
 Please bring this to: $tn
 EOF
 
-lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.10 -o job-sheets-default=pixie,none -E
+lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.1/ -o job-sheets-default=pixie,none -E
 
 sleep 0.5
 

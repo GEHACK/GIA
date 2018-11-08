@@ -11,4 +11,15 @@ use Illuminate\Http\Request;
 
 class DeploymentController extends CrudController {
     protected static $model = Deployment::class;
+
+    protected static $routes = [
+        "{id}"   => ["touch" => ["touch" => "POST"]],
+        "" =>  ["create" => "POST"],
+    ];
+
+    protected static $blacklist = self::map;
+
+    public function touch($id) {
+        Deployment::find($id)->touch();
+    }
 }

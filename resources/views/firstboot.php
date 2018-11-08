@@ -6,12 +6,12 @@ sleep 5
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains icpc-kotlinc junit"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains icpc-kotlinc junit"
 
 # Start of more expansive installation
 apt install -y software-properties-common
 
-curl -XPOST -H "Content-Type: text/plain" --data 5 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 5}" ${baseurl}/proxy/script/${scriptid}
 
 cat > /root/pc2cancer.gpgkey << EOF
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -76,13 +76,13 @@ apt-get update
 apt-get install screen curl snapd parallel -y --force-yes
 curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
 
-curl -XPOST -H "Content-Type: text/plain" --data 6 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 6}" ${baseurl}/proxy/script/${scriptid}
 
 cat > /etc/cron.d/notif-pixie << EOF
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-#* * * * * root /usr/bin/curl -XPOST ${baseurl}/proxy/register/laptop/\$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32 ; echo '') >/dev/null 2>&1
+* * * * * root /usr/bin/curl -XPOST ${baseurl}/proxy/deployments/<?php echo $depl->guid; ?>/touch >/dev/null 2>&1
 EOF
 
 echo "export LC_ALL=C.UTF-8" >> /etc/profile
@@ -93,17 +93,17 @@ apt-get remove --purge gdm3 -y --force-yes
 
 apt-get install lightdm-webkit-greeter lightdm -y --force-yes
 
-curl -XPOST -H "Content-Type: text/plain" --data 35 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 35}" ${baseurl}/proxy/script/${scriptid}
 
 wget ${baseurl}/proxy/pixie/greeter.html -O /usr/share/lightdm-webkit/themes/default/index.html
 # wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
 # cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
 
-curl -XPOST -H "Content-Type: text/plain" --data 40 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 40}" ${baseurl}/proxy/script/${scriptid}
 
 apt-get install $aptpackages -y --force-yes
 
-curl -XPOST -H "Content-Type: text/plain" --data 60 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 60}" ${baseurl}/proxy/script/${scriptid}
 
 mkdir /root/snaps
 cd /root/snaps
@@ -114,18 +114,18 @@ find . -name "*.assert" | cut -d'.' -f2 | parallel 'snap ack .{}.assert; snap in
 cd ../..
 rm -rf snaps
 
-curl -XPOST -H "Content-Type: text/plain" --data 90 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 90}" ${baseurl}/proxy/script/${scriptid}
 
 # Install printer
 wget ${baseurl}/printer.ppd.gz
 lpadmin -p Printer -P printer.ppd.gz -v ipp://10.1.0.10
 
-curl -XPOST -H "Content-Type: text/plain" --data 93 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 93}" ${baseurl}/proxy/script/${scriptid}
 
 #remove wireless
 mkdir -p /root/backup/
 mv /lib/modules/$(uname -r)/kernel/drivers/net/wireless /root/backup/
-curl -XPOST -H "Content-Type: text/plain" --data 94 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 94}" ${baseurl}/proxy/script/${scriptid}
 
 #install netbeans 8
 #wget ${baseurl}/netbeans/netbeans-8.0-javase-linux.sh
@@ -141,7 +141,7 @@ blacklist snd_pcsp
 blacklist pcspkr
 EOF
 
-curl -XPOST -H "Content-Type: text/plain" --data 96 ${baseurl}/proxy/pixie/script/${scriptid}/update
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 96}" ${baseurl}/proxy/script/${scriptid}
 
 
 # Setup aliasses
@@ -173,16 +173,11 @@ rm -rf /home/contestant
 cp -r /etc/skel/ /home/contestant
 chown -R contestant:contestant /home/contestant/
 
-curl -XPOST -H "Content-Type: text/plain" --data 100 ${baseurl}/proxy/pixie/script/${scriptid}/update
-
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
 
-curl -0 -v -XPOST -H "Content-Type: text/plain; charset=utf-8" $baseurl/proxy/pixie/script/${scriptid}/finish \
---data-binary @- << EOF
-${apts}
-${snaps}
-EOF
+curl -0 -v -XPATCH -H "Content-Type: application/json; charset=utf-8" $baseurl/proxy/script/${scriptid} \
+--data "{\"value\": 100, \"status\": \"finished\", \"result\": \"${apts} ${snaps}\"}"
 
 cat >> /root/makePublic.sh << EOF
 #!/bin/bash

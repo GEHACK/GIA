@@ -27,6 +27,8 @@ $app->withFacades(true, [
     // Schema helper to allow for easy guid creation in migrations
     Illuminate\Support\Facades\Schema::class => "oSchema",
     \App\Misc\DatabaseHelpers\Schema::class  => "Schema",
+    \Tuupke\Finalizer\FinalizerFacade::class => "Finalizer",
+    \Eventix\PubSub\PubSubFacade::class => "PubSub"
 ]);
 
 $app->withEloquent();

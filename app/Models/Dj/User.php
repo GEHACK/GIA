@@ -10,7 +10,6 @@ class User extends Model {
     protected $table = 'user';
 
     protected $primaryKey = 'userid';
-    protected $with = ['team'];
 
     public $timestamps = false;
 
@@ -24,6 +23,11 @@ class User extends Model {
         "ip_address",
         "enabled",
     ];
+
+    protected $appends = ['id'];
+    public function getIdAttribute() {
+        return $this->userid;
+    }
 
     public function team() {
         return $this->belongsTo(Team::class, 'teamid');

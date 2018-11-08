@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-class ExecJob extends BaseModel {
-
-    protected $table = 'execJobs';
+class Script extends BaseModel {
 
     protected $fillable = [
         "type",
@@ -19,6 +17,6 @@ class ExecJob extends BaseModel {
     ];
 
     public function deployment() {
-        return $this->belongsTo(Deployment::class, "deployment_id");
+        return $this->belongsTo(Deployment::class, "deployment_id", 'guid');
     }
 }

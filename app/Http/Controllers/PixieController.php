@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deployment;
-use App\Models\ExecJob;
+use App\Models\Script;
 use App\Models\Room;
 use Eventix\Http\CrudController;
 use Illuminate\Http\Request;
@@ -13,10 +13,10 @@ class PixieController extends CrudController {
     protected static $routes = [
         "preseed"      => ["preseed" => "GET"],
         "firstboot"    => ["firstboot" => "GET"],
-        "script/{sid}" => [
-            "update" => ["updateScript" => "POST"],
-            "finish" => ["finishScript" => "POST"],
-        ],
+        // "script/{sid}" => [
+        //     "update" => ["updateScript" => "POST"],
+        //     "finish" => ["finishScript" => "POST"],
+        // ],
     ];
 
     protected static $blacklist = self::map;
@@ -36,7 +36,7 @@ class PixieController extends CrudController {
             "value"  => 0,
         ]);
 
-        return view("firstboot", ["script" => $script]);
+        return view("firstboot", ["script" => $script, 'depl' => $depl]);
     }
 
     public function ping(Request $r) {
@@ -98,7 +98,7 @@ class PixieController extends CrudController {
     }
 
     public function updateScript($sid, Request $r) {
-        $script = ExecJob::findOrFail($sid);
+        $script = Script::findOrFail($sid);
         $script->update([
             "status" => "running",
             "value"  => $r->getContent(),
@@ -111,7 +111,7 @@ class PixieController extends CrudController {
     }
 
     public function finishScript($sid, Request $r) {
-        $script = ExecJob::findOrFail($sid);
+        $script = Script::findOrFail($sid);
 
         $script->update([
             "status" => "finished",

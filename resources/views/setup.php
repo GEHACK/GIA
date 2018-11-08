@@ -1,8 +1,8 @@
 #!/bin/bash
 
 mkdir imgFiles
-wget http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux -O imgFiles/linux
-wget http://archive.ubuntu.com/ubuntu/dists/xenial-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz -O imgFiles/initrd.gz
+wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/linux -O imgFiles/linux
+wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/ubuntu-installer/amd64/initrd.gz -O imgFiles/initrd.gz
 
 git clone git://git.ipxe.org/ipxe.git
 baseurl="http://<?php echo env("SYS_URL"); ?>"
@@ -87,10 +87,10 @@ cd ../..
 mkdir snaps
 cd snaps
 
-snap download kotlin
-snap download intellij-idea-community
-snap download pycharm-community
-snap download eclipse
+# snap download kotlin
+# snap download intellij-idea-community
+# snap download pycharm-community
+# snap download eclipse
 snap download atom
 snap download vscode
 chmod +rx *
