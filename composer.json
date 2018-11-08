@@ -21,7 +21,6 @@
         "eventix/laravel-nats": "dev-master",
         "laravel/lumen-framework": "5.7.*",
         "pda/pheanstalk": "~3.0",
-        "tuupke/laravel-finalizer": "^1.0",
         "vlucas/phpdotenv": "~2.2",
         "watson/validating": "~2.0",
         "webpatser/laravel-uuid": "^3.0"

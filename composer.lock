@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cb4b07083fa2bd4773688650a1ba6df",
+    "content-hash": "0b8a080ee146e2ea096a17740b2ebe93",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -2974,22 +2974,29 @@
         },
         {
             "name": "tuupke/laravel-finalizer",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tuupke/laravel-finalizer.git",
-                "reference": "df7f024b3941aba1979e9330d2ab26745b4d2ed0"
+                "reference": "c1be5d782ab5ce5afa2c7859ee554238974a860a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tuupke/laravel-finalizer/zipball/df7f024b3941aba1979e9330d2ab26745b4d2ed0",
-                "reference": "df7f024b3941aba1979e9330d2ab26745b4d2ed0",
+                "url": "https://api.github.com/repos/tuupke/laravel-finalizer/zipball/c1be5d782ab5ce5afa2c7859ee554238974a860a",
+                "reference": "c1be5d782ab5ce5afa2c7859ee554238974a860a",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.0.0"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Finalizer": "Tuupke\\Finalizer\\FinalizerFacade"
+                    }
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Tuupke\\Finalizer\\": "src"
@@ -3006,7 +3013,7 @@
                 }
             ],
             "description": "Simple package with helpers to handle execution after closed connections",
-            "time": "2017-11-22T12:23:47+00:00"
+            "time": "2018-11-08T16:11:52+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
