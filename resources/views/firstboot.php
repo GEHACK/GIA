@@ -177,9 +177,9 @@ chown -R contestant:contestant /home/contestant/
 
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
-
+res=$(echo -e "$apts $snaps" | sed -z 's/\n/\\n/g')
 curl -0 -v -XPATCH -H "Content-Type: application/json; charset=utf-8" ${baseurl}/proxy/scripts/${scriptid} \
---data "{\"value\": 100, \"status\": \"finished\", \"result\": \"${apts} ${snaps}\"}"
+--data "{\"value\": 100, \"status\": \"finished\", \"result\": \"$res\"}"
 
 cat >> /root/makePublic.sh << EOF
 #!/bin/bash
