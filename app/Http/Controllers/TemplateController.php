@@ -60,7 +60,7 @@ class TemplateController extends CrudController {
 
         $depl = Deployment::where($attrs)->first();
 
-        if (!is_null($depl) && false) {
+        if (!is_null($depl)) {
             $depl->fill($attrs);
 
             if ($depl->isDirty()) {
