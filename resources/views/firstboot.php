@@ -8,7 +8,7 @@ curl -XPATCH -H "Content-Type: application/json" --data "{\"status\": \"running\
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltproc procps g++ pypy fp-compiler firefox cups cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains icpc-kotlinc junit"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk default-jre-headless ntp xsltproc procps g++ pypy fp-compiler firefox cups cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains junit"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -171,13 +171,17 @@ alias mypy3=python3
 
 EOF
 
+wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/ansible/files/kotlin.deb -O /root/kotlin.deb
+dpkg -i /root/kotlin.deb
+
 rm -rf /home/contestant
 cp -r /etc/skel/ /home/contestant
 chown -R contestant:contestant /home/contestant/
 
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
-res=$(echo -e "$apts $snaps" | sed -z 's/\n/\\n/g')
+kotlin="$(kotlin -version)"
+res=$(echo -e "$apts $snaps $kotlin" | sed -z 's/\n/\\n/g')
 curl -0 -v -XPATCH -H "Content-Type: application/json; charset=utf-8" ${baseurl}/proxy/scripts/${scriptid} \
 --data "{\"value\": 100, \"status\": \"finished\", \"result\": \"$res\"}"
 
