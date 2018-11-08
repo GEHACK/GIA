@@ -34,6 +34,10 @@ $router->get("tts", function (Request $r) {
     ];
 });
 
+$router->get("key", function () {
+    return \Helpers::getKey();
+});
+
 // \App\Http\Controllers\AssignmentController::buildRoutes($router);
 // \App\Http\Controllers\PixieController::buildRoutes($router);
 // \App\Http\Controllers\RoomController::buildRoutes($router);

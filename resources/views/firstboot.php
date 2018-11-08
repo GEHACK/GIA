@@ -11,7 +11,7 @@ aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk ntp xsltpr
 # Start of more expansive installation
 apt install -y software-properties-common
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 5}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 5}" ${baseurl}/proxy/scripts/${scriptid}
 
 cat > /root/pc2cancer.gpgkey << EOF
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -76,7 +76,7 @@ apt-get update
 apt-get install screen curl snapd parallel -y --force-yes
 curl ${baseurl}/proxy/key >> /root/.ssh/authorized_keys;
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 6}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 6}" ${baseurl}/proxy/scripts/${scriptid}
 
 cat > /etc/cron.d/notif-pixie << EOF
 SHELL=/bin/sh
@@ -93,17 +93,17 @@ apt-get remove --purge gdm3 -y --force-yes
 
 apt-get install lightdm-webkit-greeter lightdm -y --force-yes
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 35}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 35}" ${baseurl}/proxy/scripts/${scriptid}
 
 wget ${baseurl}/proxy/pixie/greeter.html -O /usr/share/lightdm-webkit/themes/default/index.html
 # wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
 # cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 40}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 40}" ${baseurl}/proxy/scripts/${scriptid}
 
 apt-get install $aptpackages -y --force-yes
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 60}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 60}" ${baseurl}/proxy/scripts/${scriptid}
 
 mkdir /root/snaps
 cd /root/snaps
@@ -114,18 +114,18 @@ find . -name "*.assert" | cut -d'.' -f2 | parallel 'snap ack .{}.assert; snap in
 cd ../..
 rm -rf snaps
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 90}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 90}" ${baseurl}/proxy/scripts/${scriptid}
 
 # Install printer
 wget ${baseurl}/printer.ppd.gz
 lpadmin -p Printer -P printer.ppd.gz -v ipp://10.1.0.10
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 93}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 93}" ${baseurl}/proxy/scripts/${scriptid}
 
 #remove wireless
 mkdir -p /root/backup/
 mv /lib/modules/$(uname -r)/kernel/drivers/net/wireless /root/backup/
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 94}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 94}" ${baseurl}/proxy/scripts/${scriptid}
 
 #install netbeans 8
 #wget ${baseurl}/netbeans/netbeans-8.0-javase-linux.sh
@@ -141,7 +141,7 @@ blacklist snd_pcsp
 blacklist pcspkr
 EOF
 
-curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 96}" ${baseurl}/proxy/script/${scriptid}
+curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 96}" ${baseurl}/proxy/scripts/${scriptid}
 
 
 # Setup aliasses
@@ -176,7 +176,7 @@ chown -R contestant:contestant /home/contestant/
 snaps="$(snap list)"
 apts="$(apt list --installed $aptpackages)"
 
-curl -0 -v -XPATCH -H "Content-Type: application/json; charset=utf-8" $baseurl/proxy/script/${scriptid} \
+curl -0 -v -XPATCH -H "Content-Type: application/json; charset=utf-8" ${baseurl}/proxy/scripts/${scriptid} \
 --data "{\"value\": 100, \"status\": \"finished\", \"result\": \"${apts} ${snaps}\"}"
 
 cat >> /root/makePublic.sh << EOF
