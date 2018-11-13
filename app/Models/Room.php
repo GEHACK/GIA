@@ -12,8 +12,8 @@ class Room extends SimpleBaseModel {
     protected $connection = "mysql";
     protected $primaryKey = 'guid';
 
-    protected $rules = [
-        'name' => 'required|unique:rooms,name',
+    protected static $rules = [
+        'name' => ["required","unique:rooms,name"]
     ];
 
     protected $fillable = [

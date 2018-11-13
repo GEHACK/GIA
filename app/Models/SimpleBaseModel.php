@@ -9,7 +9,6 @@ class SimpleBaseModel extends \Eventix\Http\Model {
     protected $primaryKey = 'guid';
 
     // Determines if a failed save/reinstate should result in an automatic error. @ValidatingTrait
-    protected $rules = [];
     public $incrementing = false;
     public $timestamps = true;
     protected $dateFormat = "Y-m-d\TH:i:sP";

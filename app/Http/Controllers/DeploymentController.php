@@ -13,11 +13,8 @@ class DeploymentController extends CrudController {
     protected static $model = Deployment::class;
 
     protected static $routes = [
-        "{id}"   => ["touch" => ["touch" => "POST"]],
-        "" =>  ["create" => "POST"],
+        "{id}/touch" => ["touch" => "POST"],
     ];
-
-    protected static $blacklist = self::map;
 
     public function touch($id) {
         Deployment::find($id)->touch();

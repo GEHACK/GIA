@@ -7,9 +7,9 @@ use App\Models\Dj\User;
 class Deployment extends BaseModel {
     protected $connection = "mysql";
 
-    protected $rules = [
-        "ip" => "required|ipv4",
-        "room_id" => "nullable|exists:rooms,guid",
+    protected static $rules = [
+        "ip" => ["required", "ipv4"],
+        "room_id" => ["nullable", "exists:rooms,guid"],
     ];
 
     protected $with = ["scripts"];

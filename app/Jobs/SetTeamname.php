@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Deployment;
 use App\Models\Dj\User;
+use App\Models\Script;
+use Carbon\Carbon;
 
 class SetTeamname extends Job
 {
@@ -21,8 +23,12 @@ class SetTeamname extends Job
      */
     public function handle()
     {
+        $s = $this->depl->scripts()->create(["name" => "Teamname enforcement - " . Carbon::now(), "type" => "absolute"]);
         error_reporting(E_ALL);
         $pk = \Helpers::getKey(false, false);
+
+        $s->status = 'running';
+        $s->save();
 
         $pip = $this->depl->proxy_ip;
         $ip = $this->depl->ip;
@@ -56,6 +62,10 @@ service lightdm restart
 ";
 
         var_dump($this->liveExecuteCommand($cmd));
+
+        $s->status = 'finished';
+        $s->result = $tn;
+        $s->save();
 
         echo $time;
     }

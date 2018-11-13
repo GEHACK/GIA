@@ -195,6 +195,7 @@ EOF
 
 chmod +x /root/makePublic.sh
 
+/usr/bin/chfn -f $(ip -o -4  address show  | awk ' NR==2 { gsub(/\/.*/, "", $4); print $4 } ') contestant
 
 rm /etc/rc.local
 

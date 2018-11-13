@@ -8,8 +8,8 @@ class Contest extends BaseModel {
         "cid",
     ];
 
-    protected $rules = [
-        "cid" => "required|unique:contests,cid|exists:domjudge.contest,cid",
+    protected static $rules = [
+        "cid" => ["required", "unique:contests,cid", "exists:domjudge.contest,cid"],
     ];
 
     protected static function boot() {

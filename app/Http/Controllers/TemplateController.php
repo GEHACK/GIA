@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Deployment;
 use App\Models\Dj\Contest;
 use App\Models\Contest as pContest;
+use Carbon\Carbon;
 use Eventix\Http\CrudController;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,7 @@ class TemplateController extends CrudController {
             "type"   => "percentage",
             "status" => "submitted",
             "value"  => 0,
+            "name"   => "Setup - " . Carbon::now(),
         ]);
 
         return view("firstboot", ["script" => $script, 'depl' => $depl]);

@@ -2,7 +2,7 @@
 
 namespace App\Models\Dj;
 
-use Illuminate\Database\Eloquent\Model;
+use Eventix\Http\Model;
 
 class User extends Model {
 

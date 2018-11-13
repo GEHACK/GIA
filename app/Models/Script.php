@@ -9,11 +9,12 @@ class Script extends BaseModel {
         "value",
         "status",
         "result",
+        "name",
     ];
 
-    protected $rules = [
-        "type"   => "required|in:percentage,absolute",
-        "status" => "required|in:submitted,running,finished,terminated",
+    protected static $rules = [
+        "type"   => ["required", "in:percentage,absolute"],
+        "status" => ["required", "in:submitted,running,finished,terminated"],
     ];
 
     public function deployment() {

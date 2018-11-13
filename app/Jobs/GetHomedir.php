@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Deployment;
 use App\Models\Dj\User;
+use App\Models\Script;
+use Carbon\Carbon;
 
 class GetHomedir extends Job {
     private $depl;
@@ -18,6 +20,10 @@ class GetHomedir extends Job {
      * @return void
      */
     public function handle() {
+        $s = $this->depl->scripts()->create(["name" => "Homedir retrieval - " . Carbon::now(), "type" => "absolute"]);
+        $s->status = 'running';
+        $s->save();
+
         error_reporting(E_ALL);
         $pk = \Helpers::getKey(false, false);
 
@@ -28,6 +34,7 @@ class GetHomedir extends Job {
         $user = User::find($this->depl->userid);
         if (is_null($user) || is_null($user->team)) {
             echo "Could not deploy, user/team not found";
+
             return;
         }
 
@@ -41,7 +48,7 @@ class GetHomedir extends Job {
 /usr/sbin/service lightdm restart
 /bin/tar czf /root/$rand.tar.gz /home/contestant/
 ");
-        $scpCmd = "scp -i $pk -o StrictHostKeyChecking=no -o ProxyCommand=\"ssh -A -i $pk -t -o StrictHostKeyChecking=no root@$pip nc $ip 22\" root@$ip:/root/$rand.tar.gz " . storage_path()."/$tid-$rand.tar.gz";
+        $scpCmd = "scp -i $pk -o StrictHostKeyChecking=no -o ProxyCommand=\"ssh -A -i $pk -t -o StrictHostKeyChecking=no root@$pip nc $ip 22\" root@$ip:/root/$rand.tar.gz " . storage_path() . "/$tid-$rand.tar.gz";
         echo $scpCmd;
         var_dump($this->liveExecuteCommand($scpCmd));
 
@@ -55,6 +62,10 @@ reboot
 
         var_dump($res);
         echo $time;
+
+        $s->status = 'finished';
+        $s->result = storage_path() . "/$tid-$rand.tar.gz";
+        $s->save();
     }
 
     function liveExecuteCommand($cmd) {
