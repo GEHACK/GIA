@@ -29,14 +29,14 @@ echo Trying to load initrd
 initrd \${base-url}/imgFiles/initrd.gz
 
 echo Attempt boot
-imgargs linux auto=true fb=false url=\${base-url}/proxy/template/preseed tasksel/first=\"\" netcfg/choose_interface=eno1 hostname=teammachine domain=progcont
+imgargs linux auto=true fb=false url=${base-url}/proxy/templates/preseed interface=eth0 auto=true priority=critical net.ifnames=0 tasksel/first=\"\" hostname=teammachine domain=progcont
 
 boot
 
 DELIM
 
 
-apt install dnsmasq -y
+apt install dnsmasq nginx-full -y
 cat > /etc/dnsmasq.conf << DELIM
 log-queries
 

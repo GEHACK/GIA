@@ -20,12 +20,15 @@ class Room extends SimpleBaseModel {
         "name",
         "rows",
         "columns",
+        "offset"
     ];
 
     protected $casts = [
         "rows" => "int",
         "columns" => "int",
     ];
+
+    protected $hidden = ['contest_id'];
 
     public function contest() {
         return $this->belongsTo(Contest::class, "contest_id");

@@ -40,12 +40,28 @@ class SetTeamname extends Job
             return;
         }
 
+        // TODO determine placement when printing
+        $count = \DB::table('deployments')
+            ->selectRaw('count(guid) as c')
+            ->whereRaw('cast(T1.numerator / T1.denominator as decimal(16,8)) <', $this->depl->numerator / $this->depl->denomintator)
+            ->where('room_id', $this->depl->room_id)
+            ->first()->c;
+
+        $po = $this->depl->getRoomPosition();
         $tn = $user->team->name;
+        $un = $user->username;
+        $user->team->room = $loc = sprintf("Room: %s, Row: %s, Col: %s", $po["room"], $po["row"], $po["column"]);
+        $user->team->save();
 
         $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip /bin/bash << EOT
 
-/usr/bin/chfn -f \"$tn\" contestant
+if /usr/bin/chfn -f \"$tn\" contestant; then
+   echo 'Jeej'
+else
+   /usr/bin/chfn -f \"$un\" contestant
+fi
 
+lpadmin -p Printer -P /usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd -v http://10.1.0.1:631/printers/printer -D \"$loc\" -o job-sheets-default=classified,none -E
 cat > /usr/share/cups/banners/pixie << EOF
 #PDF-BANNER
 Template default.pdf
@@ -64,7 +80,7 @@ service lightdm restart
         var_dump($this->liveExecuteCommand($cmd));
 
         $s->status = 'finished';
-        $s->result = $tn;
+        $s->result = $tn . " $count";
         $s->save();
 
         echo $time;

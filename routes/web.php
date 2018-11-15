@@ -1,6 +1,5 @@
 <?php
 
-use Eventix\Http\Model;
 use Illuminate\Http\Request;
 
 \App\Http\Controllers\TemplateController::buildRoutes($router);
@@ -8,23 +7,25 @@ use Illuminate\Http\Request;
 \App\Http\Controllers\RoomController::buildRoutes($router);
 \App\Http\Controllers\ScriptController::buildRoutes($router);
 
-$router->get("seed", function () {
-    // $deployment = \App\Models\Deployment::with('scripts.deployment')->find('DK3sMi1v9yglLfH1ge29raTeq5YAjTnB');
-    //
-    // return $deployment->getWith();
-    //
-    // $arrs = [];
-    // foreach ($deployment->getWith() as $rel)
-    //     if (is_subclass_of($cn = get_class($deployment->{$rel}()->getRelated()), Model::class))
-    //         $arrs[$rel] = $cn::getFrontendRules();
-    //
-    // return $arrs;
+$router->get('test/{id}', function($deplId) {
+    $depls = \App\Models\Room::find('mf8')->deployments()->get();
+    // $depls = \App\Models\Deployment::all();
 
+    $arrs = [];
+    foreach ($depls as $depl) {
+        $po = $depl->getRoomPosition();
+        $arrs[$depl->guid] = sprintf("Room: %s, Row: %s, Col: %s", $po["room"], $po["row"], $po["column"]);
+    }
+
+    return $arrs;
+});
+
+$router->get("seed", function () {
     $map = [
-        "rooms"       => \App\Models\Room::with('deployments.scripts')->orderBy("name")->get(),
         "teams"       => \App\Models\Dj\Team::with('users')->get(),
+        "users"       => \App\Models\Dj\User::all(),
+        "rooms"       => \App\Models\Room::with('deployments.scripts')->orderBy("name")->get(),
         "deployments" => \App\Models\Deployment::whereNull('room_id')->with('scripts')->get(),
-        "users"       => \App\Models\Dj\User::whereNull('teamid')->get()
     ];
 
     $map["rooms"]["__rules"] = \App\Models\Room::getFrontendRules();
@@ -36,11 +37,11 @@ $router->get("seed", function () {
 });
 
 $router->get("tts", function (Request $r) {
-    if (is_null($cHash = $r->header("CONTEST_HASH")) || is_null($contest = pContest::where("hash", $cHash)->first()))
-        $this->errorNotFound();
+    if (is_null($cHash = $r->header("CONTEST_HASH")) || is_null($contest = \App\Models\Contest::where("hash", $cHash)->first()))
+        abort(404);
 
     $now = $_SERVER["REQUEST_TIME"];
-    $a = Contest::find($contest->cid);
+    $a = \App\Models\Dj\Contest::find($contest->cid);
 
     $tta = $a->activatetime - $now;
     $tte = $a->endtime - $now;

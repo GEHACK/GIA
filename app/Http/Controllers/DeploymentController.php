@@ -14,9 +14,20 @@ class DeploymentController extends CrudController {
 
     protected static $routes = [
         "{id}/touch" => ["touch" => "POST"],
+        "loc/{ip}"   => ["loc" => "GET"],
     ];
 
     public function touch($id) {
         Deployment::find($id)->touch();
+    }
+
+    public function loc($ip) {
+        $depl = Deployment::with('room')->where("ip", $ip)->first();
+        if (is_null($depl))
+            abort(404);
+
+        $po = $depl->getRoomPosition();
+
+        return sprintf("Room: %s, Row: %s, Col: %s", $po["room"], $po["row"], $po["column"]);
     }
 }

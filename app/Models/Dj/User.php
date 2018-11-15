@@ -24,9 +24,22 @@ class User extends Model {
         "enabled",
     ];
 
-    protected $appends = ['id'];
-    public function getIdAttribute() {
+    protected $hidden = [
+        'teamid',
+        'userid'
+    ];
+
+    protected $appends = [
+        "team_id",
+        'guid',
+    ];
+
+    public function getGuidAttribute() {
         return $this->userid;
+    }
+
+    public function getTeamIdAttribute() {
+        return $this->getOriginal('teamid');
     }
 
     public function team() {

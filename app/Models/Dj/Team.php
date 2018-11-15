@@ -12,7 +12,6 @@ class Team extends Model {
     protected $primaryKey = 'teamid';
 
     protected $attributes = [
-        "id",
         "external_id",
         "name",
         "category_id",
@@ -27,8 +26,10 @@ class Team extends Model {
         "penalty",
     ];
 
-    protected $appends = ['id'];
-    public function getIdAttribute() {
+    protected $hidden = ['teamid'];
+
+    protected $appends = ['guid'];
+    public function getGuidAttribute() {
         return $this->teamid;
     }
 

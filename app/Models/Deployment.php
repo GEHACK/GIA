@@ -8,25 +8,37 @@ class Deployment extends BaseModel {
     protected $connection = "mysql";
 
     protected static $rules = [
-        "ip" => ["required", "ipv4"],
+        "ip"      => ["required", "ipv4"],
         "room_id" => ["nullable", "exists:rooms,guid"],
+        "user_id" => ["nullable"],
     ];
 
     protected $with = ["scripts"];
 
     protected $fillable = [
-        "userid",
         "proxy_ip",
         "room_id",
         "ip",
     ];
+
+    protected $appends = [
+        "user_id",
+    ];
+
+    protected $hidden = [
+        "userid",
+    ];
+
+    public function getUserIdAttribute() {
+        return $this->getOriginal('userid');
+    }
 
     public function user() {
         return $this->belongsTo(User::class, 'userid', 'userid');
     }
 
     public function room() {
-        return $this->belongsToMany(Room::class, "room_deployment", "deployment_id", "room_id");
+        return $this->belongsTo(Room::class, "room_id", 'guid');
     }
 
     public function scripts() {
@@ -45,5 +57,45 @@ class Deployment extends BaseModel {
             return $res;
 
         return $res->deployments();
+    }
+
+    public function getRoomPosition() {
+        $count = \DB::table('deployments')
+            ->selectRaw('count(guid) as c')
+            ->where(\DB::raw('cast(numerator / denominator as decimal(16,8))'), '<', $this->numerator / $this->denominator)
+            ->where('room_id', $this->room_id)
+            ->where('guid', '<>', $this->guid)
+            ->first()->c;
+
+        $room = $this->room;
+        if (is_null($room))
+            return [
+                "room"   => "unassigned",
+                "column" => -1,
+                "row"    => -1,
+            ];
+
+        $colMap = [];
+        switch ($room->columns) {
+            case 1:
+                $colMap = [""];
+                break;
+            case 2:
+                $colMap = ["l", "r"];
+                break;
+            case 3:
+                $colMap = ["l", "m", "r"];
+                break;
+            default:
+                for ($i = 0; $i < $room->columns; $i++) {
+                    $colMap[$i] = str_repeat(".", $i) . "X" . str_repeat(".", $room->columns - 1 - $i);
+                }
+        }
+
+        return [
+            "room"   => $room->name,
+            "column" => $colMap[$count % $room->columns],
+            "row"    => floor($count / $room->columns) + 1,
+        ];
     }
 }

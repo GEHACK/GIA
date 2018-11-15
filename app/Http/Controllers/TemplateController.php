@@ -55,9 +55,9 @@ class TemplateController extends CrudController {
             "proxy_ip" => null,
         ];
 
-        if ($r->hasHeader("X-Real-IP")) {
+        if ($r->hasHeader("X-Forwarded-For")) {
             $attrs["proxy_ip"] = $attrs["ip"];
-            $attrs["ip"] = $r->header("X-Real-IP");
+            $attrs["ip"] = $r->header("X-Forwarded-For");
         }
 
         $depl = Deployment::where($attrs)->first();
@@ -75,7 +75,6 @@ class TemplateController extends CrudController {
                 $depl->save();
             }
         } else {
-            // create($uri, $method = 'GET', $parameters = array(), $cookies = array(), $files = array(), $server = array(), $content = null)
             $request = $r->duplicate($r->request->add($attrs));
             $request->setMethod("POST");
             $request->server->set("REQUEST_URI", "/deployments");
