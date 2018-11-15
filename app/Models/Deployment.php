@@ -18,20 +18,9 @@ class Deployment extends BaseModel {
     protected $fillable = [
         "proxy_ip",
         "room_id",
+        "userid",
         "ip",
     ];
-
-    protected $appends = [
-        "user_id",
-    ];
-
-    protected $hidden = [
-        "userid",
-    ];
-
-    public function getUserIdAttribute() {
-        return $this->getOriginal('userid');
-    }
 
     public function user() {
         return $this->belongsTo(User::class, 'userid', 'userid');
