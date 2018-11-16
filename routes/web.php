@@ -55,6 +55,7 @@ $router->get("tts", function (Request $r) {
 });
 
 $router->get("key", function () {
+    return \DB::select(\DB::raw('select count(guid) from deployments'));
     return \Helpers::getKey();
 });
 

@@ -15,6 +15,7 @@ class OpsController extends CrudController {
 
     protected static $routes = [
         "enforce" => [
+            "locUpdate"  => ["updateAllLocations" => "POST"],
             "enforceAll" => "POST",
             "{id}"       => ["enforceOne" => "POST"],
         ],
@@ -49,6 +50,7 @@ class OpsController extends CrudController {
     }
 
     public function execAll(Request $r) {
+
 
     }
 
@@ -106,5 +108,20 @@ class OpsController extends CrudController {
         // return $cmd;
 
         return explode("\r\n\r\n", `$cmd`)[1];
+    }
+
+    public function updateAllLocations() {
+        $depls = Deployment::with('user.team')->whereNotNull('room_id')->get();
+
+        foreach ($depls as $depl) {
+            if (is_null($depl->user) || is_null($depl->user->team))
+                continue;
+
+            $depl->user->team->room = $depl->getRoomPosition();
+            $depl->user->ip_address = $depl->ip;
+
+            $depl->user->save();
+            $depl->user->team->save();
+        }
     }
 }

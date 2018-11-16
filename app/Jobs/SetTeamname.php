@@ -30,60 +30,75 @@ class SetTeamname extends Job
         $s->status = 'running';
         $s->save();
 
-        $pip = $this->depl->proxy_ip;
-        $ip = $this->depl->ip;
-        $time = time();
+        try {
 
-        $user = User::find($this->depl->userid);
-        if (is_null($user) || is_null($user->team)) {
-            echo "Could not deploy, user/team not found";
-            return;
-        }
+            $pip = $this->depl->proxy_ip;
+            $ip = $this->depl->ip;
+            $time = time();
 
-        // TODO determine placement when printing
-        $count = \DB::table('deployments')
-            ->selectRaw('count(guid) as c')
-            ->whereRaw('cast(T1.numerator / T1.denominator as decimal(16,8)) <', $this->depl->numerator / $this->depl->denomintator)
-            ->where('room_id', $this->depl->room_id)
-            ->first()->c;
+            $user = User::find($this->depl->userid);
+            if (is_null($user) || is_null($user->team)) {
+                echo "Could not deploy, user/team not found";
 
-        $po = $this->depl->getRoomPosition();
-        $tn = $user->team->name;
-        $un = $user->username;
-        $user->team->room = $loc = sprintf("Room: %s, Row: %s, Col: %s", $po["room"], $po["row"], $po["column"]);
-        $user->team->save();
+                return;
+            }
 
-        $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip /bin/bash << EOT
+            // TODO determine placement when printing
+            $count = \DB::table('deployments')
+                ->selectRaw('count(guid) as c')
+                ->whereRaw('cast(numerator / denominator as decimal(16,8)) < ?', $this->depl->numerator / $this->depl->denominator)
+                ->where('room_id', $this->depl->room_id)
+                ->first()->c;
 
-if /usr/bin/chfn -f \"$tn\" contestant; then
+            $po = $this->depl->getRoomPosition();
+            $tn = $user->team->name;
+            $un = $user->username;
+            $user->team->room = $loc = sprintf("Room: %s, Row: %s, Col: %s", $po["room"], $po["row"], $po["column"]);
+            $user->team->save();
+
+            $user->ip_address = $this->depl->ip;
+            $user->save();
+
+            $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip /bin/bash << EOT
+
+if /usr/bin/chfn -f \"$tn $loc\" contestant; then
    echo 'Jeej'
 else
-   /usr/bin/chfn -f \"$un\" contestant
+   /usr/bin/chfn -f \"$un $loc\" contestant
 fi
 
-lpadmin -p Printer -P /usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd -v http://10.1.0.1:631/printers/printer -D \"$loc\" -o job-sheets-default=classified,none -E
-cat > /usr/share/cups/banners/pixie << EOF
-#PDF-BANNER
-Template default.pdf
-Show time-at-creation time-at-processing job-originating-user-name
-
-Please bring this to: $tn
-EOF
-
-lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.1/ -o job-sheets-default=pixie,none -E
+##lpadmin -p Printer -P /usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd -v http://10.1.0.1:631/printers/printer -D \"$loc\" -o job-sheets-default=classified,none -E
+##cat > /usr/share/cups/banners/pixie << EOF
+###PDF-BANNER
+##Template default.pdf
+##Show time-at-creation time-at-processing job-originating-user-name
+##
+##Please bring this to: $tn
+##EOF
+#
+##lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.1/ -o job-sheets-default=pixie,none -E
 
 sleep 0.5
 
 service lightdm restart
+EOT
+
+kill \$SSH_AGENT_PID
+
 ";
 
-        var_dump($this->liveExecuteCommand($cmd));
+            var_dump($this->liveExecuteCommand($cmd));
 
-        $s->status = 'finished';
-        $s->result = $tn . " $count";
-        $s->save();
+            $s->status = 'finished';
+            $s->result = "$tn $count $loc";
+            $s->save();
 
-        echo $time;
+            echo $time;
+        } catch (\Exception $e) {
+            $s->status = 'terminated';
+            $s->result = (string) $e;
+            $s->save();
+        }
     }
 
     function liveExecuteCommand($cmd)
