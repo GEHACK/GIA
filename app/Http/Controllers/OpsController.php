@@ -77,10 +77,10 @@ class OpsController extends CrudController {
     }
 
     public function ssh(Request $r, $id) {
-        $deployment = Deployment::find($id);
+	    $deployment = Deployment::find($id);
 
         if (is_null($deployment))
-            $this->error(404);
+            $this->error(404, 'Deployment not found');
 
         $cmd = is_null($deployment->proxy_ip)
             ? "ssh.sh"

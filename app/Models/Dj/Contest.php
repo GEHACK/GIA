@@ -8,6 +8,7 @@ class Contest extends Model {
 
     protected $connection = 'domjudge';
     protected $table = 'contest';
+    public $timestamps = false;
 
     protected $primaryKey = 'cid';
 

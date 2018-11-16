@@ -139,7 +139,7 @@
         {
             user = lightdm.users[i];
 
-            document.write('<tr id="user_' + user.name +'"onclick="showField()" style="cursor: pointer;">');
+            document.write('<tr id="user_' + user.name +'"style="cursor: pointer;">');
             document.write('<td></td>');
             document.write('<td>' + user.display_name + '</td>');
             if (user.name == lightdm.timed_login_user && lightdm.timed_login_delay > 0)

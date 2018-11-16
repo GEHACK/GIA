@@ -8,6 +8,7 @@ use Eventix\Http\Model;
 class Team extends Model {
     protected $connection = 'domjudge';
     protected $table = 'team';
+    public $timestamps = false;
 
     protected $primaryKey = 'teamid';
 

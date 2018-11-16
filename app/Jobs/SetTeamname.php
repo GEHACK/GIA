@@ -43,7 +43,7 @@ class SetTeamname extends Job
         // TODO determine placement when printing
         $count = \DB::table('deployments')
             ->selectRaw('count(guid) as c')
-            ->whereRaw('cast(T1.numerator / T1.denominator as decimal(16,8)) <', $this->depl->numerator / $this->depl->denomintator)
+            ->whereRaw('cast(numerator / denominator as decimal(16,8)) < ?', $this->depl->numerator / $this->depl->denominator)
             ->where('room_id', $this->depl->room_id)
             ->first()->c;
 

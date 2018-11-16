@@ -8,7 +8,7 @@ curl -XPATCH -H "Content-Type: application/json" --data "{\"status\": \"running\
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk default-jre-headless ntp xsltproc procps g++ pypy fp-compiler firefox cups cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains junit"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk default-jre-headless ntp xsltproc procps g++ pypy fp-compiler firefox cups-client cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains junit"
 
 # Start of more expansive installation
 apt install -y software-properties-common

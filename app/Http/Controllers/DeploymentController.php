@@ -18,7 +18,12 @@ class DeploymentController extends CrudController {
     ];
 
     public function touch($id) {
-        Deployment::find($id)->touch();
+	$depl = Deployment::find($id);
+	if (is_null($depl))
+		$this->abort(404);
+
+	$depl->touch();
+	return response('', 202);
     }
 
     public function loc($ip) {
