@@ -47,4 +47,4 @@ xserver-xorg xserver-xorg/autodetect_monitor boolean true
 xserver-xorg xserver-xorg/config/monitor/selection-method    select medium
 xserver-xorg xserver-xorg/config/monitor/mode-list    select 1024x768 @ 60 Hz
 
-d-i preseed/late_command string in-target usermod -G contestant contestant; mkdir /target/root/.ssh; echo "      dhcp-identifier: mac" >> /target/etc/netplan/01-netcfg.yaml; mkdir /target/root/.ssh; chmod 700 /target/root/.ssh; wget http://<?php echo env("SYS_URL"); ?>/proxy/templates/firstboot -O /target/etc/rc.local; chmod +x /target/etc/rc.local
+d-i preseed/late_command string in-target mkdir /target/root/.ssh; echo "      dhcp-identifier: mac" >> /target/etc/netplan/01-netcfg.yaml; mkdir /target/root/.ssh; chmod 700 /target/root/.ssh; wget http://<?php echo env("SYS_URL"); ?>/proxy/templates/firstboot -O /target/etc/rc.local; chmod +x /target/etc/rc.local

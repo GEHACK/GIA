@@ -19,7 +19,9 @@ class Deployment extends BaseModel {
         "proxy_ip",
         "room_id",
         "userid",
-        "ip",
+	"ip",
+	'numerator',
+	'denominator',
     ];
 
     public function user() {
@@ -31,14 +33,14 @@ class Deployment extends BaseModel {
     }
 
     public function scripts() {
-        return $this->hasMany(Script::class, "deployment_id");
+        return $this->hasMany(Script::class, "deployment_id")->orderBy('created_at');
     }
 
     public static function getRootAttacher() {
         $res = Room::select("rooms.*", \DB::raw("count(d.guid) as cnt"))
             ->leftjoin("deployments as d", "d.room_id", "=", "rooms.guid")
             ->groupBy("rooms.guid")
-            ->havingRaw("cnt < rooms.columns * rooms.rows")
+            ->havingRaw("cnt < rooms.columns * rooms.rows - rooms.offset")
             ->orderBy("name")
             ->first();
 

@@ -7,12 +7,10 @@ use App\Models\Dj\User;
 use App\Models\Script;
 use Carbon\Carbon;
 
-class SetTeamname extends Job
-{
+class SetTeamname extends Job {
     private $depl;
 
-    public function __construct(Deployment $depl)
-    {
+    public function __construct(Deployment $depl) {
         $this->depl = $depl;
     }
 
@@ -21,8 +19,7 @@ class SetTeamname extends Job
      *
      * @return void
      */
-    public function handle()
-    {
+    public function handle() {
         $s = $this->depl->scripts()->create(["name" => "Teamname enforcement - " . Carbon::now(), "type" => "absolute"]);
         error_reporting(E_ALL);
         $pk = \Helpers::getKey(false, false);
@@ -31,7 +28,6 @@ class SetTeamname extends Job
         $s->save();
 
         try {
-
             $pip = $this->depl->proxy_ip;
             $ip = $this->depl->ip;
             $time = time();
@@ -59,12 +55,14 @@ class SetTeamname extends Job
             $user->ip_address = $this->depl->ip;
             $user->save();
 
+            $safeLoc = str_replace([':', ','], '', $loc);
+
             $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip /bin/bash << EOT
 
-if /usr/bin/chfn -f \"$tn $loc\" contestant; then
+if /usr/bin/chfn -f \"$tn $safeLoc\" contestant; then
    echo 'Jeej'
 else
-   /usr/bin/chfn -f \"$un $loc\" contestant
+   /usr/bin/chfn -f \"$un $safeLoc\" contestant
 fi
 
 ##lpadmin -p Printer -P /usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd -v http://10.1.0.1:631/printers/printer -D \"$loc\" -o job-sheets-default=classified,none -E
@@ -78,7 +76,7 @@ fi
 #
 ##lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.1/ -o job-sheets-default=pixie,none -E
 
-sleep 0.5
+## sleep 0.5
 
 service lightdm restart
 EOT
@@ -87,32 +85,31 @@ kill \$SSH_AGENT_PID
 
 ";
 
-            var_dump($this->liveExecuteCommand($cmd));
+            $lres = ($this->liveExecuteCommand($cmd));
 
             $s->status = 'finished';
-            $s->result = "$tn $count $loc";
+            $s->result = "$tn $count $loc  ".implode($lres);
             $s->save();
 
             echo $time;
         } catch (\Exception $e) {
             $s->status = 'terminated';
-            $s->result = (string) $e;
+            $s->result = (string)$e;
             $s->save();
+            `kill \$SSH_AGENT_PID`;
         }
     }
 
-    function liveExecuteCommand($cmd)
-    {
-        while (@ ob_end_flush()); // end all output buffers if any
+    function liveExecuteCommand($cmd) {
+        while (@ ob_end_flush()) ; // end all output buffers if any
 
         $proc = popen("$cmd 2>&1 ; echo Exit status : $?", 'r');
 
-        $live_output     = "";
+        $live_output = "";
         $complete_output = "";
 
-        while (!feof($proc))
-        {
-            $live_output     = fread($proc, 4096);
+        while (!feof($proc)) {
+            $live_output = fread($proc, 4096);
             $complete_output = $complete_output . $live_output;
             echo "$live_output";
             @ flush();
@@ -124,9 +121,9 @@ kill \$SSH_AGENT_PID
         preg_match('/[0-9]+$/', $complete_output, $matches);
 
         // return exit status and intended output
-        return array (
-            'exit_status'  => intval($matches[0]),
-            'output'       => str_replace("Exit status : " . $matches[0], '', $complete_output)
-        );
+        return [
+            'exit_status' => intval($matches[0]),
+            'output'      => str_replace("Exit status : " . $matches[0], '', $complete_output),
+        ];
     }
 }

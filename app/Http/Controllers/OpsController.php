@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Jobs\GetHomedir;
 use App\Jobs\SetTeamname;
 use App\Models\Deployment;
+use App\Models\Dj\Team;
+use App\Models\Dj\User;
 use App\Models\Script;
 use App\Models\Room;
 use Eventix\Http\CrudController;
@@ -82,7 +84,7 @@ class OpsController extends CrudController {
         $deployment = Deployment::find($id);
 
         if (is_null($deployment))
-            $this->error(404);
+            $this->error(404, 'Deployment not found');
 
         $cmd = is_null($deployment->proxy_ip)
             ? "ssh.sh"
@@ -113,15 +115,25 @@ class OpsController extends CrudController {
     public function updateAllLocations() {
         $depls = Deployment::with('user.team')->whereNotNull('room_id')->get();
 
+        Team::query()->update(['room' => null]);
+        User::query()->update(['ip_address' => null]);
+
+        $resp = [];
         foreach ($depls as $depl) {
             if (is_null($depl->user) || is_null($depl->user->team))
                 continue;
 
-            $depl->user->team->room = $depl->getRoomPosition();
+            $po = $depl->getRoomPosition();
+            $depl->user->team->room = $loc = sprintf("%s, %s, %s", $po["room"], $po["row"], $po["column"]);
             $depl->user->ip_address = $depl->ip;
+
+            $resp[] = "$loc&nbsp;&nbsp;&nbsp;=>&nbsp;&nbsp;&nbsp;" . $depl->user->team->name;
 
             $depl->user->save();
             $depl->user->team->save();
         }
+
+        natsort($resp);
+        return implode("<br />", $resp);
     }
 }
