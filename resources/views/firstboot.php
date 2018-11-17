@@ -174,6 +174,9 @@ EOF
 wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/ansible/files/kotlin.deb -O /root/kotlin.deb
 dpkg -i /root/kotlin.deb
 
+wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/submit -O /usr/bin/submit
+chmod +x /usr/bin/submit
+
 rm -rf /home/contestant
 cp -r /etc/skel/ /home/contestant
 chown -R contestant:contestant /home/contestant/
