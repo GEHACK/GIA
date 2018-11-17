@@ -20,6 +20,7 @@
         "eventix/http": "dev-master",
         "eventix/laravel-nats": "dev-master",
         "laravel/lumen-framework": "5.7.*",
+        "mdwheele/zalgo": "^0.2.0",
         "pda/pheanstalk": "~3.0",
         "vlucas/phpdotenv": "~2.2",
         "watson/validating": "~2.0",

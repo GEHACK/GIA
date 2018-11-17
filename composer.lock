@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b8a080ee146e2ea096a17740b2ebe93",
+    "content-hash": "22a2c9604368f1628f913eaeac9bc7d9",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -1733,6 +1733,59 @@
                 "lumen"
             ],
             "time": "2018-10-29T13:40:33+00:00"
+        },
+        {
+            "name": "mdwheele/zalgo",
+            "version": "0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mdwheele/zalgo.git",
+                "reference": "cdf1762962e8ef98b024aebe06f84539076c4a07"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mdwheele/zalgo/zipball/cdf1762962e8ef98b024aebe06f84539076c4a07",
+                "reference": "cdf1762962e8ef98b024aebe06f84539076c4a07",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zalgo\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dustin Wheeler",
+                    "email": "mdwheele@ncsu.edu",
+                    "homepage": "http://dustinwheeler.us",
+                    "role": "Developer"
+                }
+            ],
+            "description": "His six mouths speak in different tongues, and the seventh shall sing the song that ends the earth.",
+            "homepage": "https://github.com/mdwheele/zalgo",
+            "keywords": [
+                "help",
+                "me",
+                "zalgo"
+            ],
+            "time": "2015-04-02T23:45:51+00:00"
         },
         {
             "name": "monolog/monolog",

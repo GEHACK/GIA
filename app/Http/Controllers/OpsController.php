@@ -120,11 +120,14 @@ class OpsController extends CrudController {
 
         $resp = [];
         foreach ($depls as $depl) {
-            if (is_null($depl->user) || is_null($depl->user->team))
-                continue;
-
             $po = $depl->getRoomPosition();
-            $depl->user->team->room = $loc = sprintf("%s, %s, %s", $po["room"], $po["row"], $po["column"]);
+            $loc = sprintf("%s, %s, %s", $po["room"], $po["row"], $po["column"]);
+            if (is_null($depl->user) || is_null($depl->user->team)) {
+                $resp[] = "$loc&nbsp;&nbsp;&nbsp;=>&nbsp;&nbsp;&nbsp;unassigned";
+                continue;
+            }
+
+            $depl->user->team->room = $loc;
             $depl->user->ip_address = $depl->ip;
 
             $resp[] = "$loc&nbsp;&nbsp;&nbsp;=>&nbsp;&nbsp;&nbsp;" . $depl->user->team->name;
