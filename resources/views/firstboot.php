@@ -8,7 +8,7 @@ curl -XPATCH -H "Content-Type: application/json" --data "{\"status\": \"running\
 
 baseurl="http://<?php echo env("SYS_URL"); ?>"
 scriptid="<?php echo $script->guid; ?>"
-aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk default-jre-headless ntp xsltproc procps g++ pypy fp-compiler firefox cups-client cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains junit"
+aptpackages="sed perl emacs git mate-terminal make gcc openjdk-11-jdk default-jre-headless ntp xsltproc procps g++ pypy fp-compiler firefox cups-client cups-bsd kate vim gedit geany vim-gnome idle-python2.7 idle-python3.7 codeblocks terminator xterm ddd valgrind gdb icpc-clion icpc-intellij-idea icpc-pycharm icpc-eclipse icpc2019-jetbrains junit libnss3-tools"
 
 # Start of more expansive installation
 apt install -y software-properties-common
@@ -171,11 +171,19 @@ alias mypy3=python3
 
 EOF
 
+wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/submit -O /usr/bin/submit
+chmod +x /usr/bin/submit
+
+wget ${baseurl}/myCA.pem -O /usr/local/share/ca-certificates/myCA.crt
+update-ca-certificates
+
 wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/ansible/files/kotlin.deb -O /root/kotlin.deb
 dpkg -i /root/kotlin.deb
 
-wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/submit -O /usr/bin/submit
-chmod +x /usr/bin/submit
+wget https://raw.githubusercontent.com/GEHACK/domjudge-scripts/master/nwerc/firefox-profile.deb -O /root/firefox-profile.deb
+dpkg -i /root/firefox-profile.deb
+
+certutil -A -n "Programming contest CA" -t "TCu,Cuw,Tuw" -i /usr/local/share/ca-certificates/myCA.crt -d 'sql:/etc/skel/.mozilla/firefox/w782m5lz.default'
 
 rm -rf /home/contestant
 cp -r /etc/skel/ /home/contestant
