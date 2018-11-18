@@ -11,6 +11,7 @@ class SshJob extends Job {
 
     public function __construct(Deployment $depl, $command) {
         $this->depl = $depl;
+        $this->command = $command;
     }
 
     /**

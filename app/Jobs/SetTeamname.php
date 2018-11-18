@@ -47,7 +47,20 @@ class SetTeamname extends Job {
                 ->first()->c;
 
             $po = $this->depl->getRoomPosition();
-            $tn = $user->team->name;
+
+            $name = str_replace(['`'], ['\`'], $user->team->name);
+
+            $chfnMaxLength = 80;
+            if (strlen($name) > $chfnMaxLength) {
+                $zalgo = new \Zalgo\Zalgo(new \Zalgo\Soul(), \Zalgo\Mood::enraged());
+                if (strlen($deZalgoed = $zalgo->soothe($name)) <= $chfnMaxLength) {
+                    $name = $deZalgoed;
+                } else {
+                    $name = mb_strcut($name, 0, $chfnMaxLength);
+                }
+            }
+
+            $tn = trim($name);
             $un = $user->username;
             $user->team->room = $loc = sprintf("Room: %s, Row: %s, Col: %s", $po["room"], $po["row"], $po["column"]);
             $user->team->save();
@@ -96,8 +109,9 @@ kill \$SSH_AGENT_PID
             $s->status = 'terminated';
             $s->result = (string)$e;
             $s->save();
-            `kill \$SSH_AGENT_PID`;
         }
+
+        `kill \$SSH_AGENT_PID`;
     }
 
     function liveExecuteCommand($cmd) {

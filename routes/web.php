@@ -57,8 +57,6 @@ $router->get("tts", function (Request $r) {
 $router->get("test", function() {
     $zalgo = new \Zalgo\Zalgo(new \Zalgo\Soul(), \Zalgo\Mood::enraged());
 
-    $name = "D̢̾̑͆ͥͨͯe̫ͣ̿e̝̪̖ͪ̃̀p̵͙̝͎̎͛ͣF͉̤͈̆ͭ͂̓̄r̦̼̫̞i̛̤͎̓̊͛ͥ͂̔e̠̤̪͇͛ͥ͑ͩ͐̈́d̡̤̬̜̙̒̾̀̿̈́́ͯC͇̗̭͖̔̽ͦ̊͋̉õ̜̖̖̭̬̇ͪ͋d̊̃̈͏͔e̷";
-
     // return strlen($name) . ' ' . mb_strcut($name, 0, 80);
 
     $teams = \App\Models\Dj\Team::all();

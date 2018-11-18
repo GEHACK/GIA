@@ -150,20 +150,18 @@ curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 96}" ${base
 cat >> /etc/skel/.bashrc << EOF
 
 mycc() {
-gcc -x c -Wall -O2 -static -pipe -o program "$@" -lm
+gcc -x c -Wall -O2 -static -pipe -std=gnu11 -o program "$@" -lm
     ./program
 }
 mycpp() {
-g++ -x c++ -Wall -O2 -static -pipe -o program "$@" -lm
+g++ -x c++ -Wall -O2 -static -pipe -std=gnu++14 -o program "$@" -lm
     ./program
 }
-myjava() {
-javac -encoding UTF-8 -sourcepath . -d . "$@"
-    for i in *.class
-    do
-        java -Dfile.encoding=UTF-8 -XX:+UseSerialGC "${i%.*}"
-    done
-}
+
+alias myjavac=javac -encoding UTF-8 -sourcepath . -d .
+alias myjava=java -Dfile.encoding=UTF-8 -XX:+UseSerialGC -Xss64m -Xms1920m -Xmx1920m
+alias mykotlinc=kotlinc -d .
+alias mykotlin=kotlin -Dfile.encoding=UTF-8 -J-XX:+UseSerialGC -J-Xss64m -J-Xms1920m -J-Xmx1920m
 
 alias mypy='echo "Please select a python version: Run \"alias mypy=mypy2\" or \"alias mypy=mypy3\""'
 alias mypy2=pypy
