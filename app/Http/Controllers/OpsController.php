@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\GetHomedir;
 use App\Jobs\SetTeamname;
+use App\Jobs\SshJob;
 use App\Models\Deployment;
 use App\Models\Dj\Team;
 use App\Models\Dj\User;
@@ -27,7 +28,6 @@ class OpsController extends CrudController {
         ],
         "exec"    => [
             "execAll"  => "POST",
-            "{id}"     => ["execOne" => "POST"],
             "ssh/{id}" => ["ssh" => "GET"],
         ],
     ];
@@ -52,8 +52,11 @@ class OpsController extends CrudController {
     }
 
     public function execAll(Request $r) {
+        $depls = Deployment::all();
+        foreach ($depls as $depl)
+            $this->dispatch(new SshJob($depl, $r->getContent()));
 
-
+        return response('', 204);
     }
 
     public function enforceOne(Request $r, $id) {
@@ -74,10 +77,6 @@ class OpsController extends CrudController {
         $this->dispatch(new GetHomedir($depl));
 
         return response('', 204);
-    }
-
-    public function execOne(Request $r, $id) {
-
     }
 
     public function ssh(Request $r, $id) {

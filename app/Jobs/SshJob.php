@@ -4,14 +4,16 @@ namespace App\Jobs;
 
 use App\Models\Deployment;
 use App\Models\Dj\User;
+use App\Models\Script;
+use Carbon\Carbon;
 
 class SshJob extends Job {
     private $depl;
-    protected $command = "";
+    private $cmd;
 
-    public function __construct(Deployment $depl, $command) {
+    public function __construct(Deployment $depl, String $cmd) {
         $this->depl = $depl;
-        $this->command = $command;
+        $this->cmd = $cmd;
     }
 
     /**
@@ -20,43 +22,38 @@ class SshJob extends Job {
      * @return void
      */
     public function handle() {
+        $s = $this->depl->scripts()->create(["name" => "SSH Job - " . Carbon::now(), "type" => "absolute"]);
         error_reporting(E_ALL);
         $pk = \Helpers::getKey(false, false);
 
-        $pip = $this->depl->proxy_ip;
-        $ip = $this->depl->ip;
-        $time = time();
+        $s->status = 'running';
+        $s->save();
 
-        $user = User::find($this->depl->userid);
-        if (is_null($user) || is_null($user->team)) {
-            echo "Could not deploy, user/team not found";
-            return;
+        try {
+
+            $pip = $this->depl->proxy_ip;
+            $ip = $this->depl->ip;
+
+            $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip /bin/bash << EOT
+$this->cmd
+EOT
+
+kill \$SSH_AGENT_PID
+
+";
+
+            $lres = ($this->liveExecuteCommand($cmd));
+
+            $s->status = 'finished';
+            $s->result = implode($lres);
+            $s->save();
+        } catch (\Exception $e) {
+            $s->status = 'terminated';
+            $s->result = (string)$e;
+            $s->save();
         }
 
-        $tn = $user->team->name;
-        $tid = $user->team->teamid;
-
-        $rand = str_random(32);
-        $sshBase = "eval `ssh-agent`; ssh-add $pk;\n ssh -v -A -t -i $pk root@$pip ssh -A -v root@$ip";
-        $res = $this->liveExecuteCommand("$sshBase /bin/bash << EOT
-/usr/sbin/service lightdm restart
-/bin/tar czf /root/$rand.tar.gz /home/contestant/
-EOT
-");
-
-        $this->liveExecuteCommand("scp -o ProxyCommand=\"ssh -A -t root@$pip nc $ip 22\" root@$ip:/root/$rand.tar.gz " . storage_path()."/$tn-$tid-$rand.tar.gz");
-
-        $this->liveExecuteCommand("$sshBase /bin/bash << EOT
-rm -rf /home/contestant/
-cp -r /etc/skel /home/contestant
-rm -f /root/$rand.tar.gz
-chown contestant:contestant /home/contestant/ -R
-reboot
-EOT
-");
-
-        dd($res);
-        echo $time;
+        `kill \$SSH_AGENT_PID`;
     }
 
     function liveExecuteCommand($cmd) {

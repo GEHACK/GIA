@@ -40,12 +40,13 @@ class GetHomedir extends Job {
                 return;
             }
 
-            $tn = $user->team->name;
             $tid = $user->team->teamid;
 
             $rand = str_random(32);
             echo "Storing into: '$rand'";
-            $sshBase = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip";
+
+            `eval \`ssh-agent\`; ssh-add $pk`;
+            $sshBase = "ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip";
             $res = $this->liveExecuteCommand("$sshBase /bin/bash << EOT
 /usr/sbin/service lightdm restart
 /bin/tar --exclude=\".*\" -czvf /root/$rand.tar.gz /home/contestant
