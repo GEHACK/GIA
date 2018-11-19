@@ -58,11 +58,11 @@ class TemplateController extends CrudController {
         if ($r->hasHeader("X-Forwarded-For")) {
             $attrs["proxy_ip"] = $attrs["ip"];
             $attrs["ip"] = $r->header("X-Forwarded-For");
-	}
+        }
 
         $depl = Deployment::where($attrs)->first();
 
-        if (!is_null($depl) && false) {
+        if (!is_null($depl)) {
             $depl->fill($attrs);
 
             if ($depl->isDirty()) {
