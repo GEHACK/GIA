@@ -20,7 +20,7 @@ class GetHomedir extends Job {
      * @return void
      */
     public function handle() {
-        $s = $this->depl->scripts()->create(["name" => "Homedir retrieval - " . Carbon::now(), "type" => "absolute"]);
+        $s = $this->depl->scripts()->create(["name" => "Homedir retrieval - " . Carbon::now(), "type" => "absolute", "value" => ""]);
         $s->status = 'running';
         $s->save();
 

@@ -22,7 +22,7 @@ class SshJob extends Job {
      * @return void
      */
     public function handle() {
-        $s = $this->depl->scripts()->create(["name" => "SSH Job - " . Carbon::now(), "type" => "absolute"]);
+        $s = $this->depl->scripts()->create(["name" => "SSH Job - " . Carbon::now(), "type" => "absolute", "value" => ""]);
         error_reporting(E_ALL);
         $pk = \Helpers::getKey(false, false);
 
