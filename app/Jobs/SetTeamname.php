@@ -68,14 +68,11 @@ class SetTeamname extends Job {
             $user->ip_address = $this->depl->ip;
             $user->save();
 
-            $safeLoc = str_replace([':', ','], '', $loc);
-
             $cmd = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip /bin/bash << EOT
-
-if /usr/bin/chfn -f \"$tn $safeLoc\" contestant; then
+if /usr/bin/chfn -f \"$tn\" contestant; then
    echo 'Jeej'
 else
-   /usr/bin/chfn -f \"$un $safeLoc\" contestant
+   /usr/bin/chfn -f \"$un\" contestant
 fi
 
 ##lpadmin -p Printer -P /usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd -v http://10.1.0.1:631/printers/printer -D \"$loc\" -o job-sheets-default=classified,none -E

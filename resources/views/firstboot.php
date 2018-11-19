@@ -158,10 +158,10 @@ g++ -x c++ -Wall -O2 -static -pipe -std=gnu++14 -o program "$@" -lm
     ./program
 }
 
-alias myjavac=javac -encoding UTF-8 -sourcepath . -d .
-alias myjava=java -Dfile.encoding=UTF-8 -XX:+UseSerialGC -Xss64m -Xms1920m -Xmx1920m
-alias mykotlinc=kotlinc -d .
-alias mykotlin=kotlin -Dfile.encoding=UTF-8 -J-XX:+UseSerialGC -J-Xss64m -J-Xms1920m -J-Xmx1920m
+alias myjavac="javac -encoding UTF-8 -sourcepath . -d ."
+alias myjava="java -Dfile.encoding=UTF-8 -XX:+UseSerialGC -Xss64m -Xms1920m -Xmx1920m"
+alias mykotlinc="kotlinc -d ."
+alias mykotlin="kotlin -Dfile.encoding=UTF-8 -J-XX:+UseSerialGC -J-Xss64m -J-Xms1920m -J-Xmx1920m"
 
 alias mypy='echo "Please select a python version: Run \"alias mypy=mypy2\" or \"alias mypy=mypy3\""'
 alias mypy2=pypy
@@ -201,6 +201,9 @@ apt install lightdm-webkit-greeter --reinstall -y
 echo "" > /etc/apt/apt.conf
 
 EOF
+
+# Disable ssh password login
+echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 
 chmod +x /root/makePublic.sh
 

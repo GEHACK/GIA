@@ -48,7 +48,7 @@ class GetHomedir extends Job {
             $sshBase = "eval `ssh-agent`; ssh-add $pk;\n ssh -o StrictHostKeyChecking=no -t -A -i $pk root@$pip ssh -o StrictHostKeyChecking=no -A -v root@$ip";
             $res = $this->liveExecuteCommand("$sshBase /bin/bash << EOT
 /usr/sbin/service lightdm restart
-/bin/tar czf /root/$rand.tar.gz /home/contestant/
+/bin/tar --exclude=\".*\" -czvf /root/$rand.tar.gz /home/contestant
 ");
             $scpCmd = "scp -i $pk -o StrictHostKeyChecking=no -o ProxyCommand=\"ssh -A -i $pk -t -o StrictHostKeyChecking=no root@$pip nc $ip 22\" root@$ip:/root/$rand.tar.gz " . storage_path() . "/$tid-$rand.tar.gz";
             echo $scpCmd;
