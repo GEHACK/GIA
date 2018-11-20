@@ -150,11 +150,11 @@ curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 96}" ${base
 cat >> /etc/skel/.bashrc << EOF
 
 mygcc() {
-gcc -x c -Wall -O2 -static -pipe -std=gnu11 -o program \$* -lm
+gcc -x c -Wall -O2 -static -pipe -std=gnu11 -o program \$@ -lm
     ./program
 }
 mycpp() {
-g++ -x c++ -Wall -O2 -static -pipe -std=gnu++14 -o program \$* -lm
+g++ -x c++ -Wall -O2 -static -pipe -std=gnu++14 -o program \$@ -lm
     ./program
 }
 
