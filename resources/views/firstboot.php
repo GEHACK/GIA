@@ -149,7 +149,7 @@ curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 96}" ${base
 # Setup aliasses
 cat >> /etc/skel/.bashrc << EOF
 
-mycc() {
+mygcc() {
 gcc -x c -Wall -O2 -static -pipe -std=gnu11 -o program \$* -lm
     ./program
 }
