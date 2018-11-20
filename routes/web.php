@@ -54,36 +54,6 @@ $router->get("tts", function (Request $r) {
     ];
 });
 
-$router->get("test", function() {
-    $zalgo = new \Zalgo\Zalgo(new \Zalgo\Soul(), \Zalgo\Mood::enraged());
-
-    // return strlen($name) . ' ' . mb_strcut($name, 0, 80);
-
-    $teams = \App\Models\Dj\Team::all();
-    $res = [];
-    $chfnMaxLength = 80;
-    foreach ($teams as $team) {
-        $name = $team->name;
-
-        $name = str_replace(['`'], ['\`'], $name);
-
-        if (strlen($name) > $chfnMaxLength) {
-            if (strlen($deZalgoed = $zalgo->soothe($name)) <= $chfnMaxLength) {
-                $name = $deZalgoed;
-            } else {
-                $name = mb_strcut($name, 0, $chfnMaxLength);
-            }
-        }
-
-        $name = trim($name);
-
-        $res[$name] = strlen($name) . ' ' .$team->name . ' ' . $name;
-    }
-    dd($res);
-
-    return $res;
-});
-
 $router->get("key", function () {
     return \Helpers::getKey();
 });
