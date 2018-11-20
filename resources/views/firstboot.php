@@ -98,8 +98,8 @@ apt-get install lightdm-webkit-greeter lightdm -y --force-yes
 curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 35}" ${baseurl}/proxy/scripts/${scriptid}
 
 wget ${baseurl}/proxy/pixie/greeter.html -O /usr/share/lightdm-webkit/themes/default/index.html
-# wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
-# cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
+wget ${baseurl}/proxy/pixie/bg.png -O /etc/alternatives/lightdm-webkit-theme/bg.png
+cp /etc/alternatives/lightdm-webkit-theme/bg.png /usr/share/backgrounds/warty-final-ubuntu.png
 
 curl -XPATCH -H "Content-Type: application/json" --data "{\"value\": 40}" ${baseurl}/proxy/scripts/${scriptid}
 
@@ -208,6 +208,10 @@ echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 chmod +x /root/makePublic.sh
 
 /usr/bin/chfn -f $(ip -o -4  address show  | awk ' NR==2 { gsub(/\/.*/, "", $4); print $4 } ') contestant
+
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
+update-alternatives --set python3 /usr/bin/python3.7
 
 rm /etc/rc.local
 
