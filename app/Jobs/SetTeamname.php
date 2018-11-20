@@ -48,9 +48,8 @@ class SetTeamname extends Job {
 
             $po = $this->depl->getRoomPosition();
 
-	    // $name = str_replace(['`'], ['\\`'], $user->team->name);
-	    $name = trim($user->team->name);
-	    echo "Setting $name\n";
+            $name = trim(str_replace([':'], ['᛬'], $user->team->name));
+            echo "Setting $name\n";
 
             $chfnMaxLength = 80;
             if (strlen($name) > $chfnMaxLength) {
