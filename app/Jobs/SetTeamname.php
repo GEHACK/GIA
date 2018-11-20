@@ -48,7 +48,9 @@ class SetTeamname extends Job {
 
             $po = $this->depl->getRoomPosition();
 
-            $name = str_replace(['`'], ['\`'], $user->team->name);
+	    // $name = str_replace(['`'], ['\\`'], $user->team->name);
+	    $name = trim($user->team->name);
+	    echo "Setting $name\n";
 
             $chfnMaxLength = 80;
             if (strlen($name) > $chfnMaxLength) {
@@ -74,19 +76,6 @@ if /usr/bin/chfn -f \"$tn\" contestant; then
 else
    /usr/bin/chfn -f \"$un\" contestant
 fi
-
-##lpadmin -p Printer -P /usr/share/ppd/cupsfilters/Generic-PDF_Printer-PDF.ppd -v http://10.1.0.1:631/printers/printer -D \"$loc\" -o job-sheets-default=classified,none -E
-##cat > /usr/share/cups/banners/pixie << EOF
-###PDF-BANNER
-##Template default.pdf
-##Show time-at-creation time-at-processing job-originating-user-name
-##
-##Please bring this to: $tn
-##EOF
-#
-##lpadmin -p Printer -P /root/printer.ppd.gz -v ipp://10.1.0.1/ -o job-sheets-default=pixie,none -E
-
-## sleep 0.5
 
 service lightdm restart
 EOT
