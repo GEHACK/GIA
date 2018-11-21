@@ -213,6 +213,8 @@ update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
 update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
 update-alternatives --set python3 /usr/bin/python3.7
 
+for i in $(find /usr/lib/python3/dist-packages/ -name '*.so'); do echo ln -s $(echo $i; echo $i | sed 's/36/37/g'); done
+
 rm /etc/rc.local
 
 reboot
